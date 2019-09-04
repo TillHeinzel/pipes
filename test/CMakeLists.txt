@@ -74,6 +74,8 @@ endif()
 ############################
 
 set(SOURCES
+src/pipes.cpp
+
 src/detail/isRange.cpp
 src/detail/isPushable.cpp
 src/detail/SyntaxTree.cpp
