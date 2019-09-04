@@ -74,6 +74,8 @@ endif()
 ############################
 
 set(SOURCES
+src/detail/isRange.cpp
+src/detail/isPushable.cpp
 )
 
 add_executable(${PROJECT_NAME}_testing main.cpp ${SOURCES})
