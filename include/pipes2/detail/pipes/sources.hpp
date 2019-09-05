@@ -17,4 +17,20 @@ namespace tillh::pipes2
   private:
     const Range& range_;
   };
+
+  template<class Range>
+  class MoveSource
+  {
+  public:
+    constexpr MoveSource(Range& range): range_(range) {}
+
+    template<class Output>
+    void run(Output& output) const
+    {
+      for(auto& obj : range_) output.push(std::move(obj));
+    }
+
+  private:
+    Range& range_;
+  };
 }

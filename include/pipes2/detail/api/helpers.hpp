@@ -42,10 +42,18 @@ namespace tillh::pipes2::detail
     return makeIteratorSink(it);
   }
 
-  template<class Range, std::enable_if_t<is_range_v<Range>, bool> = true>
-  auto makeSource(const Range & range)
+  template<class Range, std::enable_if_t<is_range_v<remove_cv_ref_t<Range>>, bool> = true>
+  auto makeSource(Range && range)
   {
-    return Input<CopySource<Range>, OpenConnectionPlaceHolder>{CopySource<Range>(range), OpenConnectionPlaceHolder()};
+    if constexpr(std::is_rvalue_reference_v<decltype(range)>)
+    {
+      return makeInput(MoveSource<Range>(range), OpenConnectionPlaceHolder());
+    }
+    else
+    {
+      return makeInput(CopySource<Range>(range), OpenConnectionPlaceHolder());
+    }
+
   }
 }
 

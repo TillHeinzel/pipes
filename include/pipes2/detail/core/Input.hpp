@@ -23,5 +23,4 @@ namespace tillh::pipes2
   {
     return Input<Source, Node>{source, node};
   }
-
 }
