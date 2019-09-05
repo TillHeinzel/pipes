@@ -76,6 +76,8 @@ namespace tillh::pipes2
     auto node = makeNode<false, sizeof...(Outputs)>(Unzip());
     return detail::connectAllNonRecursive(node, detail::ensureValidOutput(std::forward<Outputs>(outputs))...);
   }
+
+  inline static constexpr OpenConnectionPlaceHolder _ = {};
 }
 
 // endpipes

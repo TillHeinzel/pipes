@@ -533,7 +533,7 @@ TEST_F(placeholders, tee)
   auto result1 = std::vector<int>{};
   auto result2 = std::vector<int>{};
 
-  //auto halfPipe = tee(_) >>= transform(Transform()) >>= result2;
+  auto halfPipe = tee(_) >>= transform(Transform()) >>= result2;
   
   //base >>= halfPipe(result1);
 

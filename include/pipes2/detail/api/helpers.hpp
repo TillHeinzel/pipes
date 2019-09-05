@@ -97,6 +97,9 @@ namespace tillh::pipes2::detail
   template<class Op, class Connections, class PrimaryConnection>
   struct isReceiver<Node<Op, Connections, PrimaryConnection>> : std::true_type {};
 
+  template<>
+  struct isReceiver<OpenConnectionPlaceHolder> : std::true_type {};
+
   template<class T>
   constexpr bool sends = isSender<remove_cv_ref_t<T>>::value;
 
