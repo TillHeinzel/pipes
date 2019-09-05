@@ -4,6 +4,8 @@
 
 #include <pipes2/pipes.hpp>
 
+#include "detail/is_node.hpp"
+
 using namespace tillh::pipes2;
 using namespace std::literals;
 
@@ -521,4 +523,22 @@ TEST(stream, cout)
   std::cout << std::endl;
 
   EXPECT_EQ(expected, std::string(result.str()));
+}
+
+class placeholders : public applyPipes {};
+
+TEST_F(placeholders, tee)
+{
+  const std::vector<int> base = {1,2,3,4,5};
+  auto result1 = std::vector<int>{};
+  auto result2 = std::vector<int>{};
+
+  //auto halfPipe = tee(_) >>= transform(Transform()) >>= result2;
+  
+  //base >>= halfPipe(result1);
+
+  const auto expected1 = base;
+  const auto expected2 = Transform().each(base);
+  EXPECT_EQ(result1, expected1);
+  EXPECT_EQ(result2, expected2);
 }

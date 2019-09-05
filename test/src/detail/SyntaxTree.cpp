@@ -3,6 +3,7 @@
 #include <pipes2/detail/core/connect.hpp>
 
 #include "../Dummy.hpp"
+#include "is_node.hpp"
 
 using namespace tillh::pipes2;
 

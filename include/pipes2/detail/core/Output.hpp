@@ -6,7 +6,6 @@
 #include "pipes2/detail/util/is_pushable.hpp"
 
 #include "pipes2/detail/core/OutputIteratorBase.hpp"
-#include "pipes2/detail/core/Node.hpp"
 
 namespace tillh::pipes2
 {
@@ -54,9 +53,6 @@ namespace tillh::pipes2
 
 namespace tillh::pipes2
 {
-  template<class Op, class Outputs>
-  struct is_node<Output<Op, Outputs>> : std::true_type {};
-
   template<class T>
   struct is_output : std::false_type {};
 
