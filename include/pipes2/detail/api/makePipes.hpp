@@ -90,14 +90,14 @@ namespace tillh::pipes2
   auto push_back(Pushable& pushable)
   {
     static_assert(is_pushable_v<Pushable>);
-    return detail::makeSinkOutput(PushBack<Pushable>(pushable));
+    return detail::makeIteratorSink(std::back_inserter(pushable));
   }
 
   template<class Collection>
   auto override(Collection& collection)
   {
     static_assert(is_range_v<Collection>);
-    return detail::makeSinkOutput(Override<Collection>(collection));
+    return detail::makeIteratorSink(collection.begin());
   }
 
   template<class F>

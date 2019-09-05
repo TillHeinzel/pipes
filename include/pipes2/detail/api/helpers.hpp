@@ -4,6 +4,7 @@
 
 #include "pipes2/detail/util/is_range.hpp"
 #include "pipes2/detail/util/is_pushable.hpp"
+#include "pipes2/detail/util/is_output_iterator.hpp"
 
 #include "pipes2/detail/core/connect.hpp"
 #include "pipes2/detail/core/evaluate.hpp"
@@ -22,10 +23,17 @@ namespace tillh::pipes2::detail
     return Output<Op, std::tuple<>>(op, std::tuple<>{});
   }
 
-  template<class T, std::enable_if_t<is_pushable_v<T>, bool> = true>
-  auto makeSink(T & t)
+  template<class It>
+  auto makeIteratorSink(It it)
   {
-    return makeSinkOutput(PushBack<T>(t));
+    static_assert(is_output_iterator_v<It>, "");
+    return makeSinkOutput(IteratorSink<It>(it));
+  }
+
+  template<class Pushable, std::enable_if_t<is_pushable_v<Pushable>, bool> = true>
+  auto makeSink(Pushable & pushable)
+  {
+    return makeIteratorSink(std::back_inserter(pushable));
   }
 
   template<class Range, std::enable_if_t<is_range_v<Range>, bool> = true>

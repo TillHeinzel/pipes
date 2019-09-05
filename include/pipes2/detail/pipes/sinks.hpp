@@ -2,50 +2,29 @@
 
 namespace tillh::pipes2
 {
-  template<class Pushable>
-  class PushBack
+  template<class Iterator>
+  class IteratorSink
   {
   public:
-    explicit PushBack(Pushable& pushable)
-      : pushable_(pushable)
-    {}
+    IteratorSink(Iterator iterator): iterator_(iterator) {}
 
     template<class T>
     void push(T&& t) const
     {
-      const_cast<Pushable&>(pushable_).push_back(std::forward<T>(t));
+      auto& iterator = const_cast<Iterator&>(iterator_);
+      *iterator = std::forward<T>(t);
+      ++iterator;
     }
 
   private:
-    Pushable& pushable_;
+    Iterator iterator_;
   };
-  
+
   class Discard
   {
   public:
     template<class T>
     void push(T&&) const {}
-  };
-
-  template<class Collection>
-  class Override
-  {
-  public:
-    explicit Override(Collection& collection)
-      : collection_(collection)
-    {}
-
-    template<class T>
-    void push(T&& t) const
-    {
-      if(iterator_ == collection_.end()) throw std::out_of_range("collection to be overridden has reached its end");
-      *iterator_ = std::forward<T>(t);
-      ++iterator_;
-    }
-
-  private:
-    Collection& collection_;
-    mutable typename Collection::iterator iterator_ = collection_.begin();
   };
 
   template<class F>
@@ -69,7 +48,7 @@ namespace tillh::pipes2
   {
   public:
     MapAggregator(Map& map, F f): map_(map), f_(f) {}
-    
+
     template<class T>
     void push(T&& t) const
     {

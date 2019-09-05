@@ -271,14 +271,6 @@ TEST(endPipes, overridePartial)
   EXPECT_EQ(result, expected);
 }
 
-TEST(endPipes, overrideOutOfBoundsThrow)
-{
-  const auto base = std::vector<int>{1};
-  auto result = std::vector<int>{};
-
-  EXPECT_ANY_THROW(base >>= override(result));
-}
-
 TEST(endPipes, custom)
 {
   const auto base = std::vector<int>{1,2,3,4,5};

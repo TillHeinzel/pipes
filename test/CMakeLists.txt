@@ -78,6 +78,9 @@ src/pipes.cpp
 
 src/detail/isRange.cpp
 src/detail/isPushable.cpp
+src/detail/isDereferencable.cpp
+src/detail/isIncrementable.cpp
+
 src/detail/SyntaxTree.cpp
 )
 
