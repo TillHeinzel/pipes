@@ -167,9 +167,9 @@ namespace tillh::pipes2
   }
 
   template<class Source, class InputNode, class Node>
-  auto connectSecondary(Input<Source, InputNode> lhs, Node rhs)
+  auto connectSecondary(Input<Source, InputNode>&& lhs, Node rhs)
   {
-    return makeInput(lhs.source, connectSecondary(lhs.node, rhs));
+    return makeInput(std::move(lhs.source), connectSecondary(lhs.node, rhs));
   }
 
   template<class Node>
@@ -231,8 +231,8 @@ namespace tillh::pipes2
   }
 
   template<class Source, class Node1, class Node2>
-  auto connectPrimary(Input<Source, Node1> lhs, Node2 rhs)
+  auto connectPrimary(Input<Source, Node1>&& lhs, Node2 rhs)
   {
-    return makeInput(lhs.source, connectPrimary(lhs.node, rhs));
+    return makeInput(std::move(lhs.source), connectPrimary(lhs.node, rhs));
   }
 }

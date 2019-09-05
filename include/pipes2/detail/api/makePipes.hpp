@@ -118,4 +118,23 @@ namespace tillh::pipes2
     static_assert(is_output_iterator_v<It>);
     return detail::makeIteratorSink(it);
   }
+
+  template<class Stream>
+  auto toStream(Stream& stream)
+  {
+    static_assert(std::is_base_of_v<std::ostream, remove_cv_ref_t<Stream>>);
+    return detail::makeSink(stream);
+  }
+}
+
+// sourcepipes
+namespace tillh::pipes2
+{
+  template<class T = std::string, class Stream>
+  auto fromStream(Stream&& stream)
+  {
+    static_assert(std::is_base_of_v<std::istream, remove_cv_ref_t<Stream>>);
+    static_assert(!std::is_const_v<decltype(stream)>);
+    return detail::makeSource<T>(std::forward<Stream>(stream));
+  }
 }

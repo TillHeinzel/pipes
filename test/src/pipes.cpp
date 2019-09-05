@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 
+#include <string>
+
 #include <pipes2/pipes.hpp>
 
 using namespace tillh::pipes2;
+using namespace std::literals;
 
 TEST(pipeTraits, transform)
 {
@@ -447,4 +450,75 @@ TEST_F(moveOnly, override)
   std::move(base) >>= transform(f) >>= override(result);
 
   EXPECT_EQ(expected, result);
+}
+
+TEST(streams, instream)
+{
+  const auto in = std::string{"test1 test2 test3"};
+  const auto expected = std::vector<std::string>{"TEST1", "TEST2", "TEST3"};
+
+  auto toUpper = [](const std::string& s)
+  {
+    std::string result(s.size(), '_');
+    std::transform(begin(s), end(s), begin(result), [](char c) { return std::toupper(c); });
+    return result;
+  };
+
+  auto result = std::vector<std::string>{};
+  std::istringstream(in) >>= transform(toUpper) >>= result;
+
+  EXPECT_EQ(expected, result);
+}
+
+TEST(streams, typedInStream)
+{
+  const auto in = std::string{"0 1 2 3 4"};
+  const auto expected = std::vector<int>{1,2,3,4,5};
+
+  auto f = [](int i) { return i + 1; };
+
+  auto result = std::vector<int>{};
+  fromStream<int>(std::istringstream(in)) >>= transform(f) >>= result;
+
+  EXPECT_EQ(expected, result);
+}
+
+TEST(stream, outStream)
+{
+  const auto in = std::vector{0,1,2,3,4};
+  const auto expected = std::string{"12345"};
+
+  auto f = [](int i) { return i + 1; };
+
+  auto result = std::ostringstream();
+  in >>= transform(f) >>= result;
+
+  EXPECT_EQ(expected, std::string(result.str()));
+}
+
+TEST(stream, toStream)
+{
+  const auto in = std::vector{0,1,2,3,4};
+  const auto expected = std::string{"12345"};
+
+  auto f = [](int i) { return i + 1; };
+
+  auto result = std::ostringstream();
+  in >>= transform(f) >>= toStream(result);
+
+  EXPECT_EQ(expected, std::string(result.str()));
+}
+
+TEST(stream, cout)
+{
+  const auto in = std::vector{0,1,2,3,4};
+  const auto expected = std::string{"12345"};
+
+  auto f = [](int i) { return i + 1; };
+
+  auto result = std::ostringstream();
+  in >>= transform(f) >>= tee(std::cout) >>= toStream(result);
+  std::cout << std::endl;
+
+  EXPECT_EQ(expected, std::string(result.str()));
 }

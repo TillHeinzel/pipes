@@ -33,4 +33,26 @@ namespace tillh::pipes2
   private:
     Range& range_;
   };
+
+  template<class Stream, class ExtractAs>
+  class StreamSource
+  {
+  public:
+    StreamSource(Stream& stream):streamPtr(nullptr), stream_(stream) {}
+    StreamSource(Stream&& stream):streamPtr(std::make_unique<Stream>(std::move(stream))), stream_(*streamPtr) {}
+
+    template<class Output>
+    void run(Output& output) const
+    {
+      for(auto it = std::istream_iterator<ExtractAs>{stream_.get()}; it != std::istream_iterator<ExtractAs>{}; ++it)
+      {
+        output.push(*it);
+      }
+    }
+
+  private:
+    std::unique_ptr<Stream> streamPtr;
+    std::reference_wrapper<Stream> stream_;
+
+  };
 }

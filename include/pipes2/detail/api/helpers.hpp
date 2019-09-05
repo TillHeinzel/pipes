@@ -42,18 +42,38 @@ namespace tillh::pipes2::detail
     return makeIteratorSink(it);
   }
 
+  template<class Stream, std::enable_if_t<std::is_base_of_v<std::ostream, remove_cv_ref_t<Stream>>, bool> = true>
+  auto makeSink(Stream& stream)
+  {
+    return makeSinkOutput(ToStream<remove_cv_ref_t<Stream>>(stream));
+  }
+}
+
+namespace tillh::pipes2::detail
+{
+  template<class T>
+  auto makeSourceInput(T&& t)
+  {
+    return makeInput(std::forward<T>(t), OpenConnectionPlaceHolder());
+  }
+
   template<class Range, std::enable_if_t<is_range_v<remove_cv_ref_t<Range>>, bool> = true>
   auto makeSource(Range && range)
   {
     if constexpr(std::is_rvalue_reference_v<decltype(range)>)
     {
-      return makeInput(MoveSource<Range>(range), OpenConnectionPlaceHolder());
+      return makeSourceInput(MoveSource<Range>(range));
     }
     else
     {
-      return makeInput(CopySource<Range>(range), OpenConnectionPlaceHolder());
+      return makeSourceInput(CopySource<Range>(range));
     }
+  }
 
+  template<class T = std::string, class Stream, std::enable_if_t<std::is_base_of_v<std::istream, remove_cv_ref_t<Stream>>, bool> = true>
+  auto makeSource(Stream && stream)
+  {
+    return makeSourceInput(StreamSource<remove_cv_ref_t<Stream>, T>(std::forward<Stream>(stream)));
   }
 }
 

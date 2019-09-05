@@ -73,4 +73,20 @@ namespace tillh::pipes2
     std::reference_wrapper<Map> map_;
     CopyableCallable<F> f_;
   };
+
+  template<class Stream>
+  class ToStream
+  {
+  public:
+    ToStream(Stream& stream): stream_(stream) {}
+
+    template<class T>
+    void push(T&& t) const
+    {
+      const_cast<Stream&>(stream_.get()) << std::forward<T>(t);
+    }
+
+  private:
+    std::reference_wrapper<Stream> stream_;
+  };
 }
