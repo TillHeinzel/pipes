@@ -82,6 +82,7 @@ src/detail/isDereferencable.cpp
 src/detail/isIncrementable.cpp
 
 src/detail/SyntaxTree.cpp
+src/detail/outputAsIterator.cpp
 )
 
 add_executable(${PROJECT_NAME}_testing main.cpp ${SOURCES})

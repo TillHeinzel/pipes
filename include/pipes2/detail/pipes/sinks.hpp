@@ -40,7 +40,7 @@ namespace tillh::pipes2
     }
 
   private:
-    F f_;
+    CopyableCallable<F> f_;
   };
 
   template<class Map, class F>
@@ -54,7 +54,7 @@ namespace tillh::pipes2
     {
       // assumes T is a pair. todo: make static assert for that
 
-      auto& map = const_cast<Map&>(map_);
+      auto& map = const_cast<Map&>(map_.get());
 
       const auto it = map.find(t.first);
       if(it == map.end())
@@ -69,7 +69,8 @@ namespace tillh::pipes2
     }
 
   private:
-    Map& map_;
-    F f_;
+    // use reference_wrapper to allow copy assignment, so Output<MapAggregator> can fulfill outputIterator
+    std::reference_wrapper<Map> map_;
+    CopyableCallable<F> f_;
   };
 }

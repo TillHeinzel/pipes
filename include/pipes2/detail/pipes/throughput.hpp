@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pipes2/detail/util/CopyableCallabe.hpp"
+
 namespace tillh::pipes2
 {
   template<class F>
@@ -17,7 +19,7 @@ namespace tillh::pipes2
     }
 
   private:
-    const F f_;
+    CopyableCallable<F> f_;
   };
 
   template<class F>
@@ -34,7 +36,7 @@ namespace tillh::pipes2
     }
 
   private:
-    const F f_;
+    CopyableCallable<F> f_;
   };
 
   class Demux

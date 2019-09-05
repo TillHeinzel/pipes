@@ -1,5 +1,8 @@
 #pragma once
 
+#include "pipes2/detail/util/CopyableCallabe.hpp"
+#include "pipes2/detail/util/metaprogramming.hpp"
+
 namespace tillh::pipes2
 {
   template<class Condition, class Output>
@@ -34,11 +37,11 @@ namespace tillh::pipes2
     {
       static_assert(sizeof...(Outputs) == sizeof...(Conditions));
 
-      push_recurse(std::forward<T>(t), makeCase(std::get<Conditions>(conditions_), outputs)...);
+      push_recurse(std::forward<T>(t), makeCase(std::get<CopyableCallable<Conditions>>(conditions_), outputs)...);
     }
 
   private:
-    std::tuple<Conditions...> conditions_;
+    std::tuple<CopyableCallable<Conditions>...> conditions_;
 
     template<class T, class Case, class... Cases>
     void push_recurse(T&& t, const Case& case_, const Cases& ... cases_) const
