@@ -297,3 +297,43 @@ TEST(endPipes, mapAggregator)
 
   EXPECT_EQ(results, expected);
 }
+
+TEST(endPipes, iteratorBackInserter)
+{
+  const auto base = std::vector<int>{1,2,3,4,5};
+  auto result = std::vector<int>{};
+
+  base >>= iterator(std::back_inserter(result));
+
+  EXPECT_EQ(result, base);
+}
+
+TEST(endPipes, iteratorBegin)
+{
+  const auto base = std::vector<int>{1,2,3,4,5};
+  auto result = std::vector<int>{0,0,0,0,0};
+
+  base >>= iterator(std::begin(result));
+
+  EXPECT_EQ(result, base);
+}
+
+TEST(endPipes, pipeToBackInserter)
+{
+  const auto base = std::vector<int>{1,2,3,4,5};
+  auto result = std::vector<int>{};
+
+  base >>= filter([](auto) {return true; }) >>= std::back_inserter(result);
+
+  EXPECT_EQ(result, base);
+}
+
+TEST(endPipes, pipeToBegin)
+{
+  const auto base = std::vector<int>{1,2,3,4,5};
+  auto result = std::vector<int>{0,0,0,0,0};
+
+  base >>= filter([](auto) {return true; }) >>= std::begin(result);
+
+  EXPECT_EQ(result, base);
+}

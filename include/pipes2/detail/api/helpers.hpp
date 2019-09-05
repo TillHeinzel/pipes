@@ -36,6 +36,12 @@ namespace tillh::pipes2::detail
     return makeIteratorSink(std::back_inserter(pushable));
   }
 
+  template<class It, std::enable_if_t<is_output_iterator_v<It>, bool> = true>
+  auto makeSink(It it)
+  {
+    return makeIteratorSink(it);
+  }
+
   template<class Range, std::enable_if_t<is_range_v<Range>, bool> = true>
   auto makeSource(const Range & range)
   {

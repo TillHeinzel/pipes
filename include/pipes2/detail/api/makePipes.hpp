@@ -111,4 +111,11 @@ namespace tillh::pipes2
   {
     return detail::makeSinkOutput(MapAggregator(map, aggregationFunction));
   }
+
+  template<class It>
+  auto iterator(It it)
+  {
+    static_assert(is_output_iterator_v<It>);
+    return detail::makeIteratorSink(it);
+  }
 }
