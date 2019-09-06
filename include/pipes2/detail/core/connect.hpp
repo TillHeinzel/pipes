@@ -9,6 +9,7 @@
 #include "pipes2/detail/core/Output.hpp"
 #include "pipes2/detail/core/Input.hpp"
 #include "pipes2/detail/core/evaluate.hpp"
+#include "pipes2/detail/core/traits.hpp"
 
 namespace tillh::pipes2
 {
@@ -36,38 +37,9 @@ namespace tillh::pipes2
     return canSecondaryConnectAny(Type<Connections>());
   }
 
-  template<class T>
-  constexpr static bool canPrimaryConnect(Type<T>)
-  {
-    static_assert(fail_assert<T>::value);
-    return false;
-  }
 
   template<class Op, class Connections>
   constexpr static bool canSecondaryConnect(Type<Output<Op, Connections>>)
-  {
-    return false;
-  }
-
-  constexpr static bool canPrimaryConnect(Type<OpenConnectionPlaceHolder>)
-  {
-    return true;
-  }
-
-  constexpr static bool canPrimaryConnect(Type<NoPrimary>)
-  {
-    return false;
-  }
-
-  template<class Op, class Connections, class PrimaryConnection>
-  constexpr static bool canPrimaryConnect(Type<Node<Op, Connections, PrimaryConnection>>)
-  {
-    return canPrimaryConnect(Type<PrimaryConnection>());
-  }
-
-
-  template<class Op, class Connections>
-  constexpr static bool canPrimaryConnect(Type<Output<Op, Connections>>)
   {
     return false;
   }
@@ -139,7 +111,7 @@ namespace tillh::pipes2
   auto evaluateIfFinished(Node node)
   {
     static_assert(!is_output_v<Node>);
-    if constexpr(!canPrimaryConnect(Type<Node>()) && !canSecondaryConnect(Type<Node>()))
+    if constexpr(!canPrimaryConnect_v<Node> && !canSecondaryConnect(Type<Node>()))
     {
       return evaluate(std::move(node));
     }
@@ -207,7 +179,7 @@ namespace tillh::pipes2
   template<class Node1, class Node2>
   auto connectPrimary_impl(Node1 lhs, Node2 rhs)
   {
-    static_assert(canPrimaryConnect(Type<Node1>()));
+    static_assert(canPrimaryConnect_v<Node1>);
     if constexpr(std::is_same_v<typename Node1::PrimaryConnection, OpenConnectionPlaceHolder>)
     {
       return makeNode(std::move(lhs.op), std::move(lhs.connections), std::move(rhs));

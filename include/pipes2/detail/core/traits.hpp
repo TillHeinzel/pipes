@@ -2,6 +2,8 @@
 
 #include <type_traits>
 
+#include "pipes2/detail/util/metaprogramming.hpp"
+
 namespace tillh::pipes2::detail
 {
   template<class T>
@@ -35,10 +37,13 @@ namespace tillh::pipes2::detail
   constexpr bool isCompleted = isCompletedT<remove_cv_ref_t<T>>::value;
 }
 
-namespace tillh::pipes2::detail
+namespace tillh::pipes2
 {
-  template<class T, class Sfinae = void>
-  struct canPrimaryConnectT : std::false_type {};
+  template<class T>
+  struct canPrimaryConnectT : std::false_type
+  {
+    static_assert(fail_assert<T>);
+  };
 
   template<class T>
   constexpr static bool canPrimaryConnect_v = canPrimaryConnectT<T>::value;

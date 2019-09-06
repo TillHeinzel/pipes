@@ -13,7 +13,7 @@ TEST(pipeTraits, transform)
 {
   const auto trans = transform([](auto i) {return i + 1; });
   using type = remove_cv_ref_t<decltype(trans)>;
-  static_assert(canPrimaryConnect(Type<type>()));
+  static_assert(canPrimaryConnect_v<type>);
   static_assert(is_node_v<type>);
   static_assert(!is_range_v<type>);
   static_assert(!detail::is_detected_v<begin_expression, type>);
@@ -24,7 +24,7 @@ TEST(pipeTraits, filter)
 {
   const auto filte = filter([](auto i) {return (i % 2) == 0; });
   using type = remove_cv_ref_t<decltype(filte)>;
-  static_assert(canPrimaryConnect(Type<type>()));
+  static_assert(canPrimaryConnect_v<type>);
   static_assert(is_node_v<type>);
   static_assert(!is_range_v<type>);
   static_assert(!detail::is_detected_v<begin_expression, type>);
@@ -166,8 +166,9 @@ TEST_F(applySimplePipes, partition)
 
   auto pipe = partition(Filter(), yes, no);
 
-  constexpr auto t = Type<decltype(pipe)>();
-  static_assert(!canPrimaryConnect(t));
+  using type = decltype(pipe);
+  constexpr auto t = Type<type>();
+  static_assert(!canPrimaryConnect_v<type>);
   static_assert(!canSecondaryConnect(t));
 
   base >>= pipe;

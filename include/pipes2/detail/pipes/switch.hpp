@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pipes2/detail/util/CopyableCallabe.hpp"
+#include "pipes2/detail/util/CopyableCallable.hpp"
 #include "pipes2/detail/util/metaprogramming.hpp"
 
 namespace tillh::pipes2

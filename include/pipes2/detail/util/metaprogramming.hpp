@@ -5,7 +5,10 @@
 namespace tillh::pipes2
 {
   template<class T>
-  struct fail_assert : std::false_type {};
+  struct fail_assertT : std::false_type {};
+
+  template<class T>
+  constexpr static bool fail_assert = false;
 
   template< class T >
   struct remove_cv_ref

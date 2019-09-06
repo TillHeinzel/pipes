@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pipes2/detail/util/CopyableCallable.hpp"
+
 namespace tillh::pipes2
 {
   template<class Iterator>

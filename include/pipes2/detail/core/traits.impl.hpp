@@ -41,3 +41,18 @@ namespace tillh::pipes2::detail
   template<class Source, class Op, class Connections>
   struct isCompletedT<Input<Source, Output<Op, Connections>>> : std::true_type {};
 }
+
+namespace tillh::pipes2
+{
+  template<>
+  struct canPrimaryConnectT<NoPrimary> : std::false_type {};
+
+  template<class Op, class Connections>
+  struct canPrimaryConnectT<Output<Op, Connections>> : std::false_type {};
+
+  template<>
+  struct canPrimaryConnectT<OpenConnectionPlaceHolder> : std::true_type {};
+
+  template<class Op, class Connections, class PrimaryConnection>
+  struct canPrimaryConnectT<Node<Op, Connections, PrimaryConnection>> : canPrimaryConnectT<PrimaryConnection> {};
+}

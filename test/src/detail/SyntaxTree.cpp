@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <pipes2/detail/core/connect.hpp>
+#include <pipes2/detail/core/traits.impl.hpp>
 
 #include "../Dummy.hpp"
 #include "is_node.hpp"
@@ -74,7 +75,7 @@ TEST(connectSecondary, singleNodeToOutput)
 {
   auto node1 = makeNode<false, 1>(DummyOp());
   static_assert(canSecondaryConnect(Type<decltype(node1)>()));
-  static_assert(!canPrimaryConnect(Type<decltype(node1)>()));
+  static_assert(!canPrimaryConnect_v<decltype(node1)>);
 
   auto node2 = makeOutput();
   static_assert(is_output_v<decltype(node2)>);

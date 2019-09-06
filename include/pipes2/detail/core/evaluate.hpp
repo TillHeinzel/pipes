@@ -3,6 +3,8 @@
 #include "pipes2/detail/core/Node.hpp"
 #include "pipes2/detail/core/Output.hpp"
 
+#include "pipes2/detail/core/traits.hpp"
+
 namespace tillh::pipes2
 {
   template<class Op, class Connections, class PrimaryConnection>
@@ -10,7 +12,7 @@ namespace tillh::pipes2
   {
     using NodeT = Node<Op, Connections, PrimaryConnection>;
     static_assert(!canSecondaryConnect(Type<NodeT>()));
-    static_assert(!canPrimaryConnect(Type<NodeT>()));
+    static_assert(!canPrimaryConnect_v<NodeT>);
 
     if constexpr(hasPrimary(Type<NodeT>()))
     {
