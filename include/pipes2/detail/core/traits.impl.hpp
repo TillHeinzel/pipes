@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "pipes2/detail/core/traits.hpp"
 
 #include "pipes2/detail/core/Input.hpp"
@@ -67,4 +69,10 @@ namespace tillh::pipes2
 
   template<class Op, class... Connections, class PrimaryConnection>
   struct canSecondaryConnectT<Node<Op, std::tuple<Connections...>, PrimaryConnection>> : std::disjunction<canSecondaryConnectT<Connections>...> {};
+}
+
+namespace tillh::pipes2
+{
+  template<class Op, class Connections, class PrimaryConnection>
+  struct hasPrimaryT<Node<Op, Connections, PrimaryConnection>> : std::negation<std::is_same<PrimaryConnection, NoPrimary>> {};
 }

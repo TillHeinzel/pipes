@@ -6,6 +6,8 @@
 #include "pipes2/detail/util/metaprogramming.hpp"
 #include "pipes2/detail/util/ignoreWarning.hpp"
 
+#include "pipes2/detail/core/traits.hpp"
+
 namespace tillh::pipes2
 {
   template<class OpT, class ConnectionsT, class PrimaryConnectionT>
@@ -58,14 +60,5 @@ namespace tillh::pipes2
   {
     constexpr auto makePrimary = [] {if constexpr(hasPrimaryConnection) { return OpenConnectionPlaceHolder(); } else { return NoPrimary(); }};
     return makeNode(op, makeOpenConnections(std::make_index_sequence<secondaryConnections>()), makePrimary());
-  }
-}
-
-namespace tillh::pipes2
-{
-  template<class Op, class Connections, class PrimaryConnection>
-  constexpr static bool hasPrimary(Type<Node<Op, Connections, PrimaryConnection>>)
-  {
-    return !std::is_same_v<PrimaryConnection, NoPrimary>;
   }
 }
