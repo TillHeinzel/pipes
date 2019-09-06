@@ -56,3 +56,15 @@ namespace tillh::pipes2
   template<class Op, class Connections, class PrimaryConnection>
   struct canPrimaryConnectT<Node<Op, Connections, PrimaryConnection>> : canPrimaryConnectT<PrimaryConnection> {};
 }
+
+namespace tillh::pipes2
+{
+  template<>
+  struct canSecondaryConnectT<OpenConnectionPlaceHolder> : std::true_type {};
+
+  template<class Op, class Connections>
+  struct canSecondaryConnectT<Output<Op, Connections>> : std::false_type {};
+
+  template<class Op, class... Connections, class PrimaryConnection>
+  struct canSecondaryConnectT<Node<Op, std::tuple<Connections...>, PrimaryConnection>> : std::disjunction<canSecondaryConnectT<Connections>...> {};
+}

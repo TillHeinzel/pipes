@@ -11,39 +11,6 @@
 #include "pipes2/detail/core/evaluate.hpp"
 #include "pipes2/detail/core/traits.hpp"
 
-namespace tillh::pipes2
-{
-  template<class... Ts>
-  constexpr static bool canSecondaryConnectAny(Type<std::tuple<Ts...>>)
-  {
-    return (canSecondaryConnect(Type<Ts>()) || ...);
-  }
-
-  template<class T>
-  constexpr static bool canSecondaryConnect(Type<T>)
-  {
-    static_assert(fail_assert<T>::value);
-    return false;
-  }
-
-  constexpr static bool canSecondaryConnect(Type<OpenConnectionPlaceHolder>)
-  {
-    return true;
-  }
-
-  template<class Op, class Connections, class PrimaryConnection>
-  constexpr static bool canSecondaryConnect(Type<Node<Op, Connections, PrimaryConnection>>)
-  {
-    return canSecondaryConnectAny(Type<Connections>());
-  }
-
-
-  template<class Op, class Connections>
-  constexpr static bool canSecondaryConnect(Type<Output<Op, Connections>>)
-  {
-    return false;
-  }
-}
 
 namespace tillh::pipes2
 {
@@ -56,7 +23,7 @@ namespace tillh::pipes2
     }
     else
     {
-      if constexpr(canSecondaryConnect(Type<std::tuple_element_t<index, typename Node::Connections>>()))
+      if constexpr(canSecondaryConnect_v<std::tuple_element_t<index, typename Node::Connections>>)
       {
         return index;
       }
@@ -111,7 +78,7 @@ namespace tillh::pipes2
   auto evaluateIfFinished(Node node)
   {
     static_assert(!is_output_v<Node>);
-    if constexpr(!canPrimaryConnect_v<Node> && !canSecondaryConnect(Type<Node>()))
+    if constexpr(!canPrimaryConnect_v<Node> && !canSecondaryConnect_v<Node>)
     {
       return evaluate(std::move(node));
     }

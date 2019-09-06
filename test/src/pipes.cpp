@@ -167,9 +167,8 @@ TEST_F(applySimplePipes, partition)
   auto pipe = partition(Filter(), yes, no);
 
   using type = decltype(pipe);
-  constexpr auto t = Type<type>();
   static_assert(!canPrimaryConnect_v<type>);
-  static_assert(!canSecondaryConnect(t));
+  static_assert(!canSecondaryConnect_v<type>);
 
   base >>= pipe;
 
