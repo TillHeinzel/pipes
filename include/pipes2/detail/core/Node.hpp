@@ -19,12 +19,12 @@ namespace tillh::pipes2
 
     template<class Connections_, class PrimaryConnection_, class Op_>
     Node(Connections_&& _connections, PrimaryConnection_&& _connectPrimaryion,
-         Op_&& _op): connectPrimaryion(std::forward<PrimaryConnection_>(_connectPrimaryion)), connections(
+         Op_&& _op): primaryConnection(std::forward<PrimaryConnection_>(_connectPrimaryion)), connections(
            std::forward<Connections_>(_connections)),
       op(std::forward<Op_>(_op))
     {}
 
-    PrimaryConnection connectPrimaryion;
+    PrimaryConnection primaryConnection;
     Connections connections;
     Op op;
   };
@@ -36,9 +36,9 @@ namespace tillh::pipes2
 namespace tillh::pipes2
 {
   template<class Op, class Connections, class PrimaryConnection>
-  auto makeNode(Op op, Connections connections, PrimaryConnection connectPrimaryion)
+  auto makeNode(Op op, Connections connections, PrimaryConnection primaryConnection)
   {
-    return Node<Op, Connections, PrimaryConnection>(std::move(connections), std::move(connectPrimaryion), std::move(op));
+    return Node<Op, Connections, PrimaryConnection>(std::move(connections), std::move(primaryConnection), std::move(op));
   }
 
 

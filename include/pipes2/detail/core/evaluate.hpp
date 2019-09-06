@@ -16,7 +16,7 @@ namespace tillh::pipes2
 
     if constexpr(hasPrimary_v<NodeT>)
     {
-      return makeOutput(std::move(node.op), std::tuple_cat(std::move(node.connections), std::make_tuple(std::move(node.connectPrimaryion))));
+      return makeOutput(std::move(node.op), std::tuple_cat(std::move(node.connections), std::make_tuple(std::move(node.primaryConnection))));
     }
     else
     {

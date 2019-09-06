@@ -71,7 +71,7 @@ namespace tillh::pipes2
   template<std::size_t index, class Node1, class Node2>
   auto replace(Node1 node1, Node2 node2)
   {
-    return makeNode(node1.op, tuple_replace<index>(node1.connections, node2), node1.connectPrimaryion);
+    return makeNode(node1.op, tuple_replace<index>(node1.connections, node2), node1.primaryConnection);
   }
 
 
@@ -140,7 +140,7 @@ namespace tillh::pipes2
     }
     else
     {
-      return makeNode(std::move(lhs.op), std::move(lhs.connections), connectPrimary_impl(lhs.connectPrimaryion, rhs));
+      return makeNode(std::move(lhs.op), std::move(lhs.connections), connectPrimary_impl(lhs.primaryConnection, rhs));
     }
   }
 
