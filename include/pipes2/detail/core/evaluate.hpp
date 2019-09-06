@@ -23,4 +23,18 @@ namespace tillh::pipes2
       return makeOutput(std::move(node.op), std::move(node.connections));
     }
   }
+
+  template<class Node>
+  auto evaluateIfFinished(Node node)
+  {
+    static_assert(!is_output_v<Node>);
+    if constexpr(!canPrimaryConnect<Node> && !canSecondaryConnect<Node>)
+    {
+      return evaluate(std::move(node));
+    }
+    else
+    {
+      return node;
+    }
+  }
 }

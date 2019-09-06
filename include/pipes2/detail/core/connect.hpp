@@ -74,19 +74,6 @@ namespace tillh::pipes2
     return makeNode(node1.op, tuple_replace<index>(node1.connections, node2), node1.connectPrimaryion);
   }
 
-  template<class Node>
-  auto evaluateIfFinished(Node node)
-  {
-    static_assert(!is_output_v<Node>);
-    if constexpr(!canPrimaryConnect<Node> && !canSecondaryConnect<Node>)
-    {
-      return evaluate(std::move(node));
-    }
-    else
-    {
-      return node;
-    }
-  }
 
   template<class Node>
   auto connectSecondary(OpenConnectionPlaceHolder, Node rhs)
