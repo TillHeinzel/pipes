@@ -1,7 +1,9 @@
 #pragma once
 #include <type_traits>
 
-#include "pipes2/detail/api/helpers.hpp"
+#include "pipes2/detail/core/connect.hpp"
+
+#include "pipes2/detail/api/ensureValidOutput.hpp"
 
 namespace tillh::pipes2
 {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pipes2/detail/util/is_range.hpp"
+
 #include "pipes2/detail/core/Node.hpp"
 
 #include "pipes2/detail/pipes/throughput.hpp"
@@ -7,7 +9,7 @@
 #include "pipes2/detail/pipes/sinks.hpp"
 #include "pipes2/detail/pipes/sources.hpp"
 
-#include "pipes2/detail/api/helpers.hpp"
+#include "pipes2/detail/api/ensureValidOutput.hpp"
 
 // throughput pipes
 namespace tillh::pipes2
