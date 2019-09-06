@@ -23,7 +23,7 @@ namespace tillh::pipes2
     }
     else
     {
-      if constexpr(canSecondaryConnect_v<std::tuple_element_t<index, typename Node::Connections>>)
+      if constexpr(canSecondaryConnect<std::tuple_element_t<index, typename Node::Connections>>)
       {
         return index;
       }
@@ -78,7 +78,7 @@ namespace tillh::pipes2
   auto evaluateIfFinished(Node node)
   {
     static_assert(!is_output_v<Node>);
-    if constexpr(!canPrimaryConnect_v<Node> && !canSecondaryConnect_v<Node>)
+    if constexpr(!canPrimaryConnect<Node> && !canSecondaryConnect<Node>)
     {
       return evaluate(std::move(node));
     }
@@ -146,7 +146,7 @@ namespace tillh::pipes2
   template<class Node1, class Node2>
   auto connectPrimary_impl(Node1 lhs, Node2 rhs)
   {
-    static_assert(canPrimaryConnect_v<Node1>);
+    static_assert(canPrimaryConnect<Node1>);
     if constexpr(std::is_same_v<typename Node1::PrimaryConnection, OpenConnectionPlaceHolder>)
     {
       return makeNode(std::move(lhs.op), std::move(lhs.connections), std::move(rhs));

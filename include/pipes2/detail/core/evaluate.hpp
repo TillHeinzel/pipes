@@ -11,8 +11,8 @@ namespace tillh::pipes2
   auto evaluate(Node<Op, Connections, PrimaryConnection>&& node)
   {
     using NodeT = Node<Op, Connections, PrimaryConnection>;
-    static_assert(!canSecondaryConnect_v<NodeT>);
-    static_assert(!canPrimaryConnect_v<NodeT>);
+    static_assert(!canSecondaryConnect<NodeT>);
+    static_assert(!canPrimaryConnect<NodeT>);
 
     if constexpr(hasPrimary(Type<NodeT>()))
     {

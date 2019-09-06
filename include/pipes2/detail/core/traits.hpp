@@ -46,7 +46,7 @@ namespace tillh::pipes2
   };
 
   template<class T>
-  constexpr static bool canPrimaryConnect_v = canPrimaryConnectT<T>::value;
+  constexpr static bool canPrimaryConnect = canPrimaryConnectT<T>::value;
 
   template<class T, class Sfinae = void>
   struct canSecondaryConnectT : std::false_type 
@@ -55,5 +55,5 @@ namespace tillh::pipes2
   };
 
   template<class T>
-  constexpr static bool canSecondaryConnect_v = canSecondaryConnectT<T>::value;
+  constexpr static bool canSecondaryConnect = canSecondaryConnectT<T>::value;
 }
