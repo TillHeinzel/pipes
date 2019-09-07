@@ -8,10 +8,6 @@ OPTION(BUILD_TESTS ON)
 ########## LIB ##########
 #########################
 
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-SET(CMAKE_CXX_EXTENSIONS OFF)
-
 add_library(${PROJECT_NAME} INTERFACE)
 add_library(tillh::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 

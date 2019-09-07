@@ -68,7 +68,6 @@ elseif(CLANG)
 	-Wno-global-constructors -Wno-padded -Wno-newline-eof -Wno-weak-vtables -Wno-missing-prototypes")
 endif()
 
-
 ############################
 ########## TARGET ##########
 ############################
