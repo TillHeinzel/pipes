@@ -5,9 +5,9 @@
 #include <list>
 #include <set>
 
-#include "pipes2/detail/util/is_incrementable.hpp"
+#include "pipes/detail/util/is_incrementable.hpp"
 
-using namespace tillh::pipes2;
+using namespace tillh::pipes;
 
 TEST(isIncrementable, vectorIterator)
 {

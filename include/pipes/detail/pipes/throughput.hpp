@@ -1,8 +1,8 @@
 #pragma once
 
-#include "pipes2/detail/util/CopyableCallable.hpp"
+#include "pipes/detail/util/CopyableCallable.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class F>
   class Transform

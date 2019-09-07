@@ -1,20 +1,20 @@
 #pragma once
 
-#include "pipes2/detail/util/is_range.hpp"
+#include "pipes/detail/util/is_range.hpp"
 
-#include "pipes2/detail/core/Node.hpp"
+#include "pipes/detail/core/Node.hpp"
 
-#include "pipes2/detail/pipes/throughput.hpp"
-#include "pipes2/detail/pipes/switch.hpp"
-#include "pipes2/detail/pipes/sinks.hpp"
-#include "pipes2/detail/pipes/sources.hpp"
-#include "pipes2/detail/pipes/makeSource.hpp"
-#include "pipes2/detail/pipes/makeSink.hpp"
+#include "pipes/detail/pipes/throughput.hpp"
+#include "pipes/detail/pipes/switch.hpp"
+#include "pipes/detail/pipes/sinks.hpp"
+#include "pipes/detail/pipes/sources.hpp"
+#include "pipes/detail/pipes/makeSource.hpp"
+#include "pipes/detail/pipes/makeSink.hpp"
 
-#include "pipes2/detail/api/ensureValidInputOutput.hpp"
+#include "pipes/detail/api/ensureValidInputOutput.hpp"
 
 // throughput pipes
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class F>
   auto filter(F f)
@@ -85,7 +85,7 @@ namespace tillh::pipes2
 }
 
 // endpipes
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   inline auto discard()
   {
@@ -134,7 +134,7 @@ namespace tillh::pipes2
 }
 
 // sourcepipes
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T = std::string, class Stream>
   auto fromStream(Stream&& stream)

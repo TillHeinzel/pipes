@@ -4,15 +4,15 @@
 #include <utility>
 #include <string>
 
-#include "pipes2/detail/util/metaprogramming.hpp"
-#include "pipes2/detail/util/is_range.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/is_range.hpp"
 
-#include "pipes2/detail/core/Input.hpp"
-#include "pipes2/detail/core/Node.hpp"
+#include "pipes/detail/core/Input.hpp"
+#include "pipes/detail/core/Node.hpp"
 
-#include "pipes2/detail/pipes/sources.hpp"
+#include "pipes/detail/pipes/sources.hpp"
 
-namespace tillh::pipes2::detail
+namespace tillh::pipes::detail
 {
   template<class T>
   auto makeSourceInput(T&& t)

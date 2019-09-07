@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include <pipes2/pipes.hpp>
+#include <pipes/pipes.hpp>
 
-namespace pipes = tillh::pipes2;
+namespace pipes = tillh::pipes;
 
 TEST(streams, instream)
 {

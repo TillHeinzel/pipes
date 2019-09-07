@@ -2,16 +2,16 @@
 
 #include <type_traits>
 
-#include "pipes2/detail/core/traits.hpp"
+#include "pipes/detail/core/traits.hpp"
 
-#include "pipes2/detail/core/Input.hpp"
-#include "pipes2/detail/core/Node.hpp"
-#include "pipes2/detail/core/Output.hpp"
+#include "pipes/detail/core/Input.hpp"
+#include "pipes/detail/core/Node.hpp"
+#include "pipes/detail/core/Output.hpp"
 
-#include "pipes2/detail/pipes/makeSink.hpp"
-#include "pipes2/detail/pipes/makeSource.hpp"
+#include "pipes/detail/pipes/makeSink.hpp"
+#include "pipes/detail/pipes/makeSource.hpp"
 
-namespace tillh::pipes2::detail
+namespace tillh::pipes::detail
 {
   template<class Source, class Tree>
   struct isSender<Input<Source, Tree>> : std::true_type {};
@@ -44,7 +44,7 @@ namespace tillh::pipes2::detail
   struct isCompletedT<Input<Source, Output<Op, Connections>>> : std::true_type {};
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Op, class Connections>
   struct canPrimaryConnectT<Output<Op, Connections>> : std::false_type {};
@@ -59,7 +59,7 @@ namespace tillh::pipes2
   struct canPrimaryConnectT<Node<Op, Connections>> : canPrimaryConnectT<last_element<Connections>> {};
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<>
   struct canSecondaryConnectT<OpenConnectionPlaceHolder> : std::true_type {};

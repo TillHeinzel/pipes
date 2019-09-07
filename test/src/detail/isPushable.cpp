@@ -5,9 +5,9 @@
 #include <list>
 #include <set>
 
-#include "pipes2/detail/util/is_pushable.hpp"
+#include "pipes/detail/util/is_pushable.hpp"
 
-using namespace tillh::pipes2;
+using namespace tillh::pipes;
 
 TEST(isPushable, vector)
 {

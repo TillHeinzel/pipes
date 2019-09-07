@@ -3,16 +3,16 @@
 #include <type_traits>
 #include <tuple>
 
-#include "pipes2/detail/util/metaprogramming.hpp"
-#include "pipes2/detail/util/FWD.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/FWD.hpp"
 
-#include "pipes2/detail/core/Node.hpp"
-#include "pipes2/detail/core/Output.hpp"
-#include "pipes2/detail/core/Input.hpp"
-#include "pipes2/detail/core/evaluate.hpp"
-#include "pipes2/detail/core/traits.hpp"
+#include "pipes/detail/core/Node.hpp"
+#include "pipes/detail/core/Output.hpp"
+#include "pipes/detail/core/Input.hpp"
+#include "pipes/detail/core/evaluate.hpp"
+#include "pipes/detail/core/traits.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T>
   struct openCountT : int_constant<0> {};
@@ -27,7 +27,7 @@ namespace tillh::pipes2
   constexpr static std::size_t openCount = openCountT<T>::value;
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<std::size_t add, std::size_t... Is>
   constexpr auto addTo(std::index_sequence<Is...>)
@@ -78,7 +78,7 @@ namespace tillh::pipes2
   }
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   enum class ConnectMode { Primary, Secondary, Any };
 
@@ -134,7 +134,7 @@ namespace tillh::pipes2
   }
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Node, class... Children>
   auto connectSecondaryImpl(Node&& node, Children&& ... children)
@@ -203,7 +203,7 @@ namespace tillh::pipes2
   }
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T> struct ensureValidOutputT;
 

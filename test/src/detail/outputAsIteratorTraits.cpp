@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <pipes2/pipes.hpp>
+#include <pipes/pipes.hpp>
 
-using namespace tillh::pipes2;
+using namespace tillh::pipes;
 
 TEST(outputAsIterator_Traits, push_back)
 {

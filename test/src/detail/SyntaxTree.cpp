@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <pipes2/pipes.hpp>
+#include <pipes/pipes.hpp>
 
 #include "../testUtils.hpp"
 #include "is_node.hpp"
 
-namespace pipes = tillh::pipes2;
+namespace pipes = tillh::pipes;
 
 using Open = pipes::OpenConnectionPlaceHolder;
 using Closed = DummyOutput;

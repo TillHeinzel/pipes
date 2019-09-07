@@ -2,9 +2,9 @@
 
 #include <type_traits>
 
-#include "pipes2/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
 
-namespace tillh::pipes2::detail
+namespace tillh::pipes::detail
 {
   template<class T>
   struct isSender : std::false_type {};
@@ -37,7 +37,7 @@ namespace tillh::pipes2::detail
   constexpr bool isCompleted = isCompletedT<remove_cv_ref_t<T>>::value;
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T>
   struct canPrimaryConnectT : std::false_type

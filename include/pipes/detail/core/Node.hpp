@@ -3,13 +3,13 @@
 #include <type_traits>
 #include <tuple>
 
-#include "pipes2/detail/util/metaprogramming.hpp"
-#include "pipes2/detail/util/ignoreWarning.hpp"
-#include "pipes2/detail/util/FWD.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/ignoreWarning.hpp"
+#include "pipes/detail/util/FWD.hpp"
 
-#include "pipes2/detail/core/traits.hpp"
+#include "pipes/detail/core/traits.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class OpT, class ConnectionsT>
   struct Node
@@ -36,7 +36,7 @@ namespace tillh::pipes2
   struct PrimaryOpenConnectionPlaceHolder {};
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Op, class Connections>
   auto makeNode(Op op, Connections connections)

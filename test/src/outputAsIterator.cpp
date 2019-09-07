@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <pipes2/pipes.hpp>
+#include <pipes/pipes.hpp>
 
-namespace pipes = tillh::pipes2;
+namespace pipes = tillh::pipes;
 
 TEST(outputAsIterators, push_back)
 {

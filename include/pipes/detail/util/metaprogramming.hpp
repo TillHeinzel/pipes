@@ -3,9 +3,9 @@
 #include <type_traits>
 #include <tuple>
 
-#include "pipes2/detail/util/FWD.hpp"
+#include "pipes/detail/util/FWD.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class... T>
   struct fail_assertT : std::false_type {};
@@ -94,7 +94,7 @@ namespace tillh::pipes2
   }
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template <typename...>
   struct is_one_of;
@@ -129,7 +129,7 @@ namespace tillh::pipes2
   constexpr bool is_unique_v = is_unique<Ts...>::value;
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T, class... Ts>
   decltype(auto) getFirst(T&& t, Ts&& ...)
@@ -137,7 +137,7 @@ namespace tillh::pipes2
     return std::forward<T>(t);
   }
 }
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<std::size_t I>
   using int_constant = std::integral_constant<std::size_t, I>;
@@ -146,7 +146,7 @@ namespace tillh::pipes2
   using sum = int_constant<(Ts::value + ...)>;
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Tuple>
   constexpr static std::size_t tuple_back = std::tuple_size_v<Tuple> -1;

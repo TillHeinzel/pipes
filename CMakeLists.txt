@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.10)
-project(pipes2
+project(pipes
         VERSION 0.0.1)
 
 OPTION(BUILD_TESTS ON)

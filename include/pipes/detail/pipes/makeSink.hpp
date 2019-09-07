@@ -4,15 +4,15 @@
 #include <iterator>
 #include <tuple>
 
-#include "pipes2/detail/util/metaprogramming.hpp"
-#include "pipes2/detail/util/is_pushable.hpp"
-#include "pipes2/detail/util/is_output_iterator.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/is_pushable.hpp"
+#include "pipes/detail/util/is_output_iterator.hpp"
 
-#include "pipes2/detail/core/Output.hpp"
+#include "pipes/detail/core/Output.hpp"
 
-#include "pipes2/detail/pipes/sinks.hpp"
+#include "pipes/detail/pipes/sinks.hpp"
 
-namespace tillh::pipes2::detail
+namespace tillh::pipes::detail
 {
   template<class Op>
   auto makeSinkOutput(Op op)

@@ -2,12 +2,12 @@
 
 #include <functional>
 
-#include "pipes2/detail/util/metaprogramming.hpp"
-#include "pipes2/detail/util/is_pushable.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/is_pushable.hpp"
 
-#include "pipes2/detail/core/OutputIteratorBase.hpp"
+#include "pipes/detail/core/OutputIteratorBase.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Op, class Outputs>
   class Output : public OutputIteratorBase<Output<Op, Outputs>>
@@ -42,7 +42,7 @@ namespace tillh::pipes2
   };
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Op, class Outputs>
   auto makeOutput(Op op, Outputs outputs)
@@ -51,7 +51,7 @@ namespace tillh::pipes2
   }
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T>
   struct is_output : std::false_type {};

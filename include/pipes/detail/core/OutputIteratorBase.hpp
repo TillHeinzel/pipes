@@ -1,6 +1,6 @@
 
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Output>
   class OutputIteratorBase

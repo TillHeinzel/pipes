@@ -1,11 +1,11 @@
 #pragma once
 
-#include "pipes2/detail/core/Node.hpp"
-#include "pipes2/detail/core/Output.hpp"
+#include "pipes/detail/core/Node.hpp"
+#include "pipes/detail/core/Output.hpp"
 
-#include "pipes2/detail/core/traits.hpp"
+#include "pipes/detail/core/traits.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Op, class Connections>
   auto evaluate(Node<Op, Connections>&& node)

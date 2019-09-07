@@ -1,9 +1,9 @@
 #pragma once
 
-#include "pipes2/detail/util/CopyableCallable.hpp"
-#include "pipes2/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/CopyableCallable.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Condition, class Output>
   struct Case

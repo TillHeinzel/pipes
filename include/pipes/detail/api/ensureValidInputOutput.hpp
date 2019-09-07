@@ -2,14 +2,14 @@
 
 #include <type_traits>
 
-#include "pipes2/detail/core/connect.hpp"
-#include "pipes2/detail/core/evaluate.hpp"
+#include "pipes/detail/core/connect.hpp"
+#include "pipes/detail/core/evaluate.hpp"
 
-#include "pipes2/detail/core/traits.hpp"
+#include "pipes/detail/core/traits.hpp"
 
-#include "pipes2/detail/pipes/makeSink.hpp"
+#include "pipes/detail/pipes/makeSink.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T, std::enable_if_t<detail::receives<T>, bool> = true>
   decltype(auto) ensureValidOutput(T && t)
@@ -36,7 +36,7 @@ namespace tillh::pipes2
   }
 }
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T, std::enable_if_t<detail::sends<T>, bool> = true>
   decltype(auto) ensureValidInput(T && t)

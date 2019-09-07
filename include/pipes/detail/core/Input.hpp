@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Source, class Node>
   struct Input

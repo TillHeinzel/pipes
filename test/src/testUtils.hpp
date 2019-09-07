@@ -1,7 +1,7 @@
 #pragma once
 
-#include <pipes2/detail/core/Node.hpp>
-#include <pipes2/detail/core/Output.hpp>
+#include <pipes/detail/core/Node.hpp>
+#include <pipes/detail/core/Output.hpp>
 
 struct DummyOp
 {
@@ -12,10 +12,10 @@ struct DummyOp
 template<bool hasPrimary, std::size_t nOutputs>
 auto makeDummyNode()
 {
-  return tillh::pipes2::makeNode<hasPrimary, nOutputs>(DummyOp());
+  return tillh::pipes::makeNode<hasPrimary, nOutputs>(DummyOp());
 }
 
-using DummyOutput = tillh::pipes2::Output<DummyOp, std::tuple<>>;
+using DummyOutput = tillh::pipes::Output<DummyOp, std::tuple<>>;
 
 namespace testUtils
 {

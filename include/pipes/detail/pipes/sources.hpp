@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class Range>
   class CopySource

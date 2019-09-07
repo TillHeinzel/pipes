@@ -2,9 +2,9 @@
 
 #include <functional>
 
-#include "pipes2/detail/util/metaprogramming.hpp"
+#include "pipes/detail/util/metaprogramming.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T>
   using push_back_expression = decltype(std::declval<T>().push_back(std::declval<typename T::value_type>()));

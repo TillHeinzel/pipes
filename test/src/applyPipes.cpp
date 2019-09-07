@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
-#include <pipes2/pipes.hpp>
+#include <pipes/pipes.hpp>
 
 #include "testUtils.hpp"
 
-namespace pipes = tillh::pipes2;
+namespace pipes = tillh::pipes;
 
 using namespace std::literals;
 

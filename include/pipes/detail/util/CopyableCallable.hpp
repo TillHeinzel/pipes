@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T>
   std::unique_ptr<T> deepCopy(const std::unique_ptr<T>& other)

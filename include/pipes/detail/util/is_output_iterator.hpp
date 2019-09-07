@@ -1,9 +1,9 @@
 #pragma once
 
-#include "pipes2/detail/util/is_dereferencable.hpp"
-#include "pipes2/detail/util/is_incrementable.hpp"
+#include "pipes/detail/util/is_dereferencable.hpp"
+#include "pipes/detail/util/is_incrementable.hpp"
 
-namespace tillh::pipes2
+namespace tillh::pipes
 {
   template<class T, class Sfinae = void>
   struct is_output_iterator : std::false_type {};
