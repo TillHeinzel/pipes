@@ -83,6 +83,7 @@ src/detail/isIncrementable.cpp
 
 src/detail/SyntaxTree.cpp
 src/detail/outputAsIterator.cpp
+src/detail/apiHelpers.cpp
 )
 
 add_executable(${PROJECT_NAME}_testing main.cpp ${SOURCES})

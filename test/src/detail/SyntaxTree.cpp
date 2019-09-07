@@ -71,7 +71,7 @@ TEST(canSecondaryConnect, manySeveralOpen)
   static_assert(canSecondaryConnect<NodeT>);
 }
 
-TEST(connectSecondary, singleNodeToOutput)
+TEST(connectSecondaryImpl, singleNodeToOutput)
 {
   auto node1 = makeNode<false, 1>(DummyOp());
   using NodeT = decltype(node1);
@@ -81,11 +81,11 @@ TEST(connectSecondary, singleNodeToOutput)
   auto node2 = makeOutput();
   static_assert(is_output_v<decltype(node2)>);
 
-  auto result = connect(secondary_constant(), node1, node2);
+  auto result = connectImpl(secondary_constant(), node1, node2);
   static_assert(is_output_v<decltype(result)>);
 }
 
-TEST(connectSecondary, depthFirst)
+TEST(connectSecondaryImpl, depthFirst)
 {
   auto node1 = makeNode<false, 2>(DummyOp());
   static_assert(canSecondaryConnect<decltype(node1)>);
@@ -93,15 +93,15 @@ TEST(connectSecondary, depthFirst)
   auto node2 = makeNode<false, 1>(DummyOp());
   static_assert(canSecondaryConnect<decltype(node2)>);
 
-  auto node3 = connectSecondary(node1, node2);
+  auto node3 = connectSecondaryImpl(node1, node2);
   static_assert(canSecondaryConnect<decltype(node3)>);
 
   auto output = makeOutput();
-  auto result = connect(secondary_constant(), node3, output);
+  auto result = connectImpl(secondary_constant(), node3, output);
   static_assert(canSecondaryConnect<decltype(result)>);
 }
 
-TEST(connectSecondary, openCount)
+TEST(connectSecondaryImpl, openCount)
 {
   auto node1 = makeNode<false, 2>(DummyOp());
   static_assert(openCount<decltype(node1)> == 2);
@@ -117,7 +117,7 @@ TEST(connectSecondary, openCount)
   static_assert(openCount<decltype(result)> == 1);
 }
 
-TEST(connectSecondary, getIndices_x)
+TEST(connectSecondaryImpl, getIndices_x)
 {
   static_assert(std::is_same_v<decltype(getIndices_x<0, 4, 1>()), std::index_sequence<0>>);
   static_assert(std::is_same_v<decltype(getIndices_x<1, 4, 3>()), std::index_sequence<1, 2, 3>>);
@@ -135,7 +135,7 @@ TEST(connectSecondary, getIndices_x)
 }
 
 
-TEST(connectSecondary, getIndices)
+TEST(connectSecondaryImpl, getIndices)
 {
   auto node1 = makeNode<false, 2>(DummyOp());
   auto node2 = makeNode<false, 3>(DummyOp());
@@ -155,23 +155,23 @@ TEST(connectSecondary, getIndices)
   static_assert(std::is_same_v<decltype(getIndices<1, decltype(combined2)>()), std::tuple<std::index_sequence<0>, std::index_sequence<>, std::index_sequence<>>>);
 }
 
-TEST(connectNew, connectSecondary)
+TEST(connectNew, connectSecondaryImpl)
 {
   const auto node1 = makeNode<false, 1>(DummyOp());
   const auto node2 = makeNode<false, 2>(DummyOp());
   const auto node3 = makeNode<false, 3>(DummyOp());
   {
-    auto result = connectSecondary(node1, node1);
+    auto result = connectSecondaryImpl(node1, node1);
     auto expected = replace<0>(node1, node1);
     static_assert(std::is_same_v<decltype(result), decltype(expected)>);
   }
   {
-    auto result = connectSecondary(node2, node1, node2);
+    auto result = connectSecondaryImpl(node2, node1, node2);
     auto expected = replace<1>(replace<0>(node2, node1), node2);
     static_assert(std::is_same_v<decltype(result), decltype(expected)>);
   }
   {
-    auto result = connectSecondary(node3, node1, node2);
+    auto result = connectSecondaryImpl(node3, node1, node2);
     auto expected = replace<1>(replace<0>(node3, node1), node2);
     static_assert(std::is_same_v<decltype(result), decltype(expected)>);
   }
@@ -182,17 +182,17 @@ TEST(connectNew, connect_secondary)
   const auto node2 = makeNode<false, 2>(DummyOp());
   const auto node3 = makeNode<false, 3>(DummyOp());
   {
-    auto result = connect(secondary_constant(), node1, node1);
+    auto result = connectImpl(secondary_constant(), node1, node1);
     auto expected = replace<0>(node1, node1);
     static_assert(std::is_same_v<decltype(result), decltype(expected)>);
   }
   {
-    auto result = connect(secondary_constant(), node2, node1, node2);
+    auto result = connectImpl(secondary_constant(), node2, node1, node2);
     auto expected = replace<1>(replace<0>(node2, node1), node2);
     static_assert(std::is_same_v<decltype(result), decltype(expected)>);
   }
   {
-    auto result = connect(secondary_constant(), node3, node1, node2);
+    auto result = connectImpl(secondary_constant(), node3, node1, node2);
     auto expected = replace<1>(replace<0>(node3, node1), node2);
     static_assert(std::is_same_v<decltype(result), decltype(expected)>);
   }

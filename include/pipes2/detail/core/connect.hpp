@@ -96,7 +96,7 @@ namespace tillh::pipes2
     }
     else
     {
-      return connect(secondary_constant(), std::forward<Connection>(connection), std::get<Indices>(newConnects)...);
+      return connectImpl(secondary_constant(), std::forward<Connection>(connection), std::get<Indices>(newConnects)...);
     }
   }
 
@@ -117,7 +117,7 @@ namespace tillh::pipes2
 namespace tillh::pipes2
 {
   template<class Node, class... Children>
-  auto connectSecondary(Node&& node, Children&& ... children)
+  auto connectSecondaryImpl(Node&& node, Children&& ... children)
   {
     static_assert(sizeof...(children) > 0);
     static_assert(sizeof...(children) <= openCount<remove_cv_ref_t<Node>>);
@@ -126,39 +126,58 @@ namespace tillh::pipes2
   }
 
   template<class Node, class Child>
-  auto connectPrimary2(Node&& node, Child&& child)
+  auto connectPrimaryImpl(Node&& node, Child&& child)
   {
-    return makeNode(FWD(node).op, FWD(node).connections, connect(primary_constant(), FWD(node).primaryConnection, FWD(child)));
+    return makeNode(FWD(node).op, FWD(node).connections, connectImpl(primary_constant(), FWD(node).primaryConnection, FWD(child)));
   }
   
   template<ConnectMode mode, class Lhs, class... Rhss>
-  auto connect(mode_constant<mode>, Lhs&& lhs, Rhss&& ... rhss)
+  auto connectImpl(mode_constant<mode>, Lhs&& lhs, Rhss&& ... rhss)
   {
     static_assert(sizeof...(Rhss) > 0, "at least 1 rhs needed");
 
     if constexpr(std::is_same_v<remove_cv_ref_t<Lhs>, OpenConnectionPlaceHolder>)
     {
       static_assert(sizeof...(Rhss) == 1, "there should never be a call to connect one placeholder with multiple nodes");
-
       return getFirst(FWD(rhss)...);
     }
     else
     {
       if constexpr(mode == ConnectMode::Secondary)
       {
-        return evaluateIfFinished(connectSecondary(FWD(lhs), FWD(rhss)...));
+        return evaluateIfFinished(connectSecondaryImpl(FWD(lhs), FWD(rhss)...));
       }
       else if(mode == ConnectMode::Primary)
       {
         static_assert(sizeof...(Rhss) == 1, "can only primaryconnect 1 at a time");
-        return evaluateIfFinished(connectPrimary2(FWD(lhs), FWD(rhss)...));
+        return evaluateIfFinished(connectPrimaryImpl(FWD(lhs), FWD(rhss)...));
       }
     }
   }
 
   template<ConnectMode mode, class Source, class Node, class... Rhss>
-  auto connect(mode_constant<mode> m, Input<Source, Node> lhs, Rhss&& ... rhss)
+  auto connectImpl(mode_constant<mode> m, Input<Source, Node> lhs, Rhss&& ... rhss)
   {
-    return makeInput(std::move(lhs.source), connect(m, std::move(lhs.node), FWD(rhss)...));
+    return makeInput(std::move(lhs.source), connectImpl(m, std::move(lhs.node), FWD(rhss)...));
+  }
+}
+
+namespace tillh::pipes2
+{
+  template<class T> struct ensureValidOutputT;
+
+  template<class T>
+  ensureValidOutputT<T&&> ensureValidOutputF(T&& t);
+
+  template<class Lhs, class... Rhs>
+  auto connectPrimary(Lhs&& lhs, Rhs&& ... rhs)
+  {
+    return connectImpl(primary_constant(), FWD(lhs), ensureValidOutputF(FWD(rhs))()...);
+  }
+
+  template<class Lhs, class... Rhs>
+  auto connectSecondary(Lhs&& lhs, Rhs&& ... rhs)
+  {
+    return connectImpl(secondary_constant(), FWD(lhs), ensureValidOutputF(FWD(rhs))()...);
   }
 }

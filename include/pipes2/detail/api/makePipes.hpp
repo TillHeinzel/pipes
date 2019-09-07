@@ -33,39 +33,39 @@ namespace tillh::pipes2
   {
     static_assert(sizeof...(Outputs) > 0, "demux requires at least one output");
     auto node = makeNode<false, sizeof...(Outputs)>(Demux());
-    return connect(secondary_constant(), node, detail::ensureValidOutput(std::forward<Outputs>(outputs))...);
+    return connectSecondary(node, FWD(outputs)...);
   }
 
   template<class Output>
   auto tee(Output&& output)
   {
     auto node = makeNode<true, 1>(Demux());
-    return connect(secondary_constant(), node, detail::ensureValidOutput(std::forward<Output>(output)));
+    return connectSecondary(node, FWD(output));
   }
 
   template<class F, class Output>
   auto case_(F f, Output&& output)
   {
-    return makeCase(f, detail::ensureValidOutput(std::forward<Output>(output)));
+    return makeCase(f, ensureValidOutput(FWD(output)));
   }
 
   template<class Output>
   auto default_(Output&& output)
   {
-    return makeCase(DefaultCondition(), detail::ensureValidOutput(std::forward<Output>(output)));
+    return makeCase(DefaultCondition(), ensureValidOutput(FWD(output)));
   }
 
   template<class... Conditions, class... Outputs>
   auto switch_(Case<Conditions, Outputs>... cases)
   {
     auto node = makeNode<false, sizeof...(Conditions)>(makeSwitch(std::make_tuple(std::move(cases.condition)...)));
-    return connect(secondary_constant(), node, std::move(cases.output)...);
+    return connectSecondary(node, std::move(cases.output)...);
   }
 
-  template<class Condition, class OutputTrue, class OutputFalse>
-  auto partition(Condition condition, OutputTrue&& trueBranch, OutputFalse&& falseBranch)
+  template<class Condition, class TrueBranch, class FalseBranch>
+  auto partition(Condition condition, TrueBranch&& trueBranch, FalseBranch&& falseBranch)
   {
-    return switch_(case_(condition, std::forward<OutputTrue>(trueBranch)), default_(std::forward<OutputFalse>(falseBranch)));
+    return switch_(case_(condition, FWD(trueBranch)), default_(FWD(falseBranch)));
   }
 
   inline auto join()
@@ -78,7 +78,7 @@ namespace tillh::pipes2
   {
     static_assert(sizeof...(Outputs) > 0, "unzip requires at least one output");
     auto node = makeNode<false, sizeof...(Outputs)>(Unzip());
-    return connect(secondary_constant(), node, detail::ensureValidOutput(std::forward<Outputs>(outputs))...);
+    return connectSecondary(node, FWD(outputs)...);
   }
 
   inline static constexpr OpenConnectionPlaceHolder _ = {};
