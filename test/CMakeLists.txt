@@ -74,15 +74,21 @@ endif()
 ############################
 
 set(SOURCES
-src/pipes.cpp
+src/applyPipes.cpp
+src/placeholders.cpp
+src/moveOnly.cpp
+src/endPipes.cpp
+src/streams.cpp
+src/outputAsIterator.cpp
 
+src/detail/pipeTraits.cpp
 src/detail/isRange.cpp
 src/detail/isPushable.cpp
 src/detail/isDereferencable.cpp
 src/detail/isIncrementable.cpp
+src/detail/outputAsIteratorTraits.cpp
 
 src/detail/SyntaxTree.cpp
-src/detail/outputAsIterator.cpp
 src/detail/apiHelpers.cpp
 )
 

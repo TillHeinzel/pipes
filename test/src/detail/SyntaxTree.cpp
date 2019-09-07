@@ -2,7 +2,7 @@
 
 #include <pipes2/pipes.hpp>
 
-#include "../Dummy.hpp"
+#include "../testUtils.hpp"
 #include "is_node.hpp"
 
 namespace pipes = tillh::pipes2;
