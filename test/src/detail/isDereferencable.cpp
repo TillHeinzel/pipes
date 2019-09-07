@@ -7,7 +7,7 @@
 
 #include "pipes/detail/util/is_dereferencable.hpp"
 
-using namespace tillh::pipes;
+using namespace tillh::pipes::util;
 
 TEST(isDereferencable, pointer)
 {

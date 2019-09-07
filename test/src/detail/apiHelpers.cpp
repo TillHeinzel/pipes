@@ -6,6 +6,6 @@ using namespace tillh::pipes;
 
 TEST(apiHelpers, canSendVector)
 {
-  static_assert(!detail::sends<std::vector<int>>);
-  static_assert(detail::canSend<std::vector<int>>);
+  static_assert(!sends<std::vector<int>>);
+  static_assert(canSend<std::vector<int>>);
 }

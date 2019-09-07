@@ -2,7 +2,8 @@
 
 #include <pipes/pipes.hpp>
 
-using namespace tillh::pipes;
+using namespace tillh::pipes::util;
+using namespace tillh::pipes::api;
 
 TEST(outputAsIterator_Traits, push_back)
 {
@@ -46,7 +47,7 @@ TEST(outputAsIterator_Traits, mapAggregator)
 TEST(outputAsIterator_Traits, closedCombination)
 {
   auto result = std::vector<int>();
-  auto iterator = transform([](auto i) {return i; }) >>= push_back(result);
+  auto iterator = (transform([](auto i) {return i; }) >>= push_back(result));
   using type = decltype(iterator);
   static_assert(is_output_iterator_v<type>);
 }

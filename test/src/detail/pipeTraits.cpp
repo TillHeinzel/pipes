@@ -6,8 +6,9 @@
 
 #include "is_node.hpp"
 
-namespace pipes = tillh::pipes;
-using namespace pipes;
+using namespace tillh::pipes::api;
+using namespace tillh::pipes::util;
+using namespace tillh::pipes;
 
 using namespace std::literals;
 
@@ -18,7 +19,7 @@ TEST(pipeTraits, transform)
   static_assert(canPrimaryConnect<type>);
   static_assert(is_node_v<type>);
   static_assert(!is_range_v<type>);
-  static_assert(!detail::is_detected_v<begin_expression, type>);
+  static_assert(!is_detected_v<begin_expression, type>);
 }
 
 TEST(pipeTraits, filter)
@@ -28,7 +29,7 @@ TEST(pipeTraits, filter)
   static_assert(canPrimaryConnect<type>);
   static_assert(is_node_v<type>);
   static_assert(!is_range_v<type>);
-  static_assert(!detail::is_detected_v<begin_expression, type>);
+  static_assert(!is_detected_v<begin_expression, type>);
 }
 
 TEST(pipeTraits, demux1)

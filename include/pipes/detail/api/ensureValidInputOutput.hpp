@@ -9,57 +9,63 @@
 
 #include "pipes/detail/pipes/makeSink.hpp"
 
-namespace tillh::pipes
+namespace tillh
 {
-  template<class T, std::enable_if_t<detail::receives<T>, bool> = true>
-  decltype(auto) ensureValidOutput(T && t)
+  namespace pipes
   {
-    return FWD(t);
-  }
+    template<class T, std::enable_if_t<receives<T>, bool> = true>
+    decltype(auto) ensureValidOutput(T && t)
+    {
+      return FWD(t);
+    }
 
-  template<class T, std::enable_if_t<!detail::receives<T>&& detail::canReceive<T>, bool> = true>
-  auto ensureValidOutput(T && t)
-  {
-    return detail::makeSink(FWD(t));
-  }
+    template<class T, std::enable_if_t<!receives<T>&& canReceive<T>, bool> = true>
+    auto ensureValidOutput(T && t)
+    {
+      return makeSink(FWD(t));
+    }
 
-  template<class T>
-  struct ensureValidOutputT
-  {
-    decltype(auto) operator() () { return ensureValidOutput(FWD(t)); }
-    T t;
-  };
-  template<class T>
-  ensureValidOutputT<T&&> ensureValidOutputF(T&& t)
-  {
-    return {FWD(t)};
+    template<class T>
+    struct ensureValidOutputT
+    {
+      decltype(auto) operator() () { return ensureValidOutput(FWD(t)); }
+      T t;
+    };
+    template<class T>
+    ensureValidOutputT<T&&> ensureValidOutputF(T&& t)
+    {
+      return {FWD(t)};
+    }
   }
 }
 
-namespace tillh::pipes
+namespace tillh
 {
-  template<class T, std::enable_if_t<detail::sends<T>, bool> = true>
-  decltype(auto) ensureValidInput(T && t)
+  namespace pipes
   {
-    return FWD(t);
-  }
+    template<class T, std::enable_if_t<sends<T>, bool> = true>
+    decltype(auto) ensureValidInput(T && t)
+    {
+      return FWD(t);
+    }
 
-  template<class T, std::enable_if_t<!detail::sends<T>&& detail::canSend<T>, bool> = true>
-  auto ensureValidInput(T && t)
-  {
-    return detail::makeSource(FWD(t));
-  }
+    template<class T, std::enable_if_t<!sends<T>&& canSend<T>, bool> = true>
+    auto ensureValidInput(T && t)
+    {
+      return makeSource(FWD(t));
+    }
 
-  template<class T>
-  struct ensureValidInputT
-  {
-    decltype(auto) operator() () { return ensureValidInput(FWD(t)); }
-    T t;
-  };
+    template<class T>
+    struct ensureValidInputT
+    {
+      decltype(auto) operator() () { return ensureValidInput(FWD(t)); }
+      T t;
+    };
 
-  template<class T>
-  ensureValidInputT<T&&> ensureValidInputF(T&& t)
-  {
-    return {FWD(t)};
+    template<class T>
+    ensureValidInputT<T&&> ensureValidInputF(T&& t)
+    {
+      return {FWD(t)};
+    }
   }
 }

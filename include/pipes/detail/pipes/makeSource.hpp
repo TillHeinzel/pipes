@@ -12,30 +12,33 @@
 
 #include "pipes/detail/pipes/sources.hpp"
 
-namespace tillh::pipes::detail
+namespace tillh
 {
-  template<class T>
-  auto makeSourceInput(T&& t)
+  namespace pipes
   {
-    return makeInput(std::forward<T>(t), PrimaryOpenConnectionPlaceHolder());
-  }
-
-  template<class Range, std::enable_if_t<is_range_v<remove_cv_ref_t<Range>>, bool> = true>
-  auto makeSource(Range && range)
-  {
-    if constexpr(std::is_rvalue_reference_v<decltype(range)>)
+    template<class T>
+    auto makeSourceInput(T&& t)
     {
-      return makeSourceInput(MoveSource<Range>(range));
+      return makeInput(std::forward<T>(t), PrimaryOpenConnectionPlaceHolder());
     }
-    else
-    {
-      return makeSourceInput(CopySource<Range>(range));
-    }
-  }
 
-  template<class T = std::string, class Stream, std::enable_if_t<std::is_base_of_v<std::istream, remove_cv_ref_t<Stream>>, bool> = true>
-  auto makeSource(Stream && stream)
-  {
-    return makeSourceInput(StreamSource<remove_cv_ref_t<Stream>, T>(std::forward<Stream>(stream)));
+    template<class Range, std::enable_if_t<util::is_range_v<util::remove_cv_ref_t<Range>>, bool> = true>
+    auto makeSource(Range && range)
+    {
+      if constexpr(std::is_rvalue_reference_v<decltype(range)>)
+      {
+        return makeSourceInput(MoveSource<Range>(range));
+      }
+      else
+      {
+        return makeSourceInput(CopySource<Range>(range));
+      }
+    }
+
+    template<class T = std::string, class Stream, std::enable_if_t<std::is_base_of_v<std::istream, util::remove_cv_ref_t<Stream>>, bool> = true>
+    auto makeSource(Stream && stream)
+    {
+      return makeSourceInput(StreamSource<util::remove_cv_ref_t<Stream>, T>(std::forward<Stream>(stream)));
+    }
   }
 }

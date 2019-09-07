@@ -2,12 +2,16 @@
 #include <type_traits>
 
 #include "pipes/detail/core/connect.hpp"
+#include "pipes/detail/core/traits.impl.hpp"
 
-namespace tillh::pipes
+namespace tillh
 {
-  template<class Lhs, class Rhs, std::enable_if_t<(detail::sends<Lhs> || detail::canSend<Lhs>) && (detail::receives<Rhs> || detail::canReceive<Rhs>), bool> = true>
-  auto operator>>=(Lhs && lhs, Rhs && rhs)
+  namespace pipes
   {
-    return connectPrimary(FWD(lhs), FWD(rhs));
+    template<class Lhs, class Rhs, std::enable_if_t<(sends<Lhs> || canSend<Lhs>) && (receives<Rhs> || canReceive<Rhs>), bool> = true>
+    auto operator>>=(Lhs && lhs, Rhs && rhs)
+    {
+      return connectPrimary(FWD(lhs), FWD(rhs));
+    }
   }
 }

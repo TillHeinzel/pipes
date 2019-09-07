@@ -2,7 +2,7 @@
 
 #include <pipes/pipes.hpp>
 
-namespace pipes = tillh::pipes;
+namespace pipes = tillh::pipes::api;
 
 TEST(outputAsIterators, push_back)
 {

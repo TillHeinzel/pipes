@@ -4,7 +4,7 @@
 
 #include "testUtils.hpp"
 
-namespace pipes = tillh::pipes;
+namespace pipes = tillh::pipes::api;
 
 using namespace std::literals;
 
