@@ -5,40 +5,43 @@
 
 #include "pipes2/detail/util/metaprogramming.hpp"
 #include "pipes2/detail/util/ignoreWarning.hpp"
+#include "pipes2/detail/util/FWD.hpp"
 
 #include "pipes2/detail/core/traits.hpp"
 
 namespace tillh::pipes2
 {
-  template<class OpT, class ConnectionsT, class PrimaryConnectionT>
+  template<class OpT, class ConnectionsT>
   struct Node
   {
     using Op = OpT;
     using Connections = ConnectionsT;
-    using PrimaryConnection = PrimaryConnectionT;
 
-    template<class Connections_, class PrimaryConnection_, class Op_>
-    Node(Connections_&& _connections, PrimaryConnection_&& _connectPrimaryion,
-         Op_&& _op): primaryConnection(std::forward<PrimaryConnection_>(_connectPrimaryion)), connections(
-           std::forward<Connections_>(_connections)),
-      op(std::forward<Op_>(_op))
+    template<class Connections_, class Op_>
+    Node(Connections_&& _connections, Op_&& _op):
+      connections(std::forward<Connections_>(_connections)), op(std::forward<Op_>(_op))
     {}
 
-    PrimaryConnection primaryConnection;
+    template<class... Rhss>
+    auto operator()(Rhss&& ... rhss) const
+    {
+      return connectSecondary(*this, FWD(rhss)...);
+    }
+
     Connections connections;
     Op op;
   };
 
-  struct NoPrimary {};
   struct OpenConnectionPlaceHolder {};
+  struct PrimaryOpenConnectionPlaceHolder {};
 }
 
 namespace tillh::pipes2
 {
-  template<class Op, class Connections, class PrimaryConnection>
-  auto makeNode(Op op, Connections connections, PrimaryConnection primaryConnection)
+  template<class Op, class Connections>
+  auto makeNode(Op op, Connections connections)
   {
-    return Node<Op, Connections, PrimaryConnection>(std::move(connections), std::move(primaryConnection), std::move(op));
+    return Node<Op, Connections>(std::move(connections), std::move(op));
   }
 
 
@@ -58,7 +61,17 @@ namespace tillh::pipes2
   template<bool hasPrimaryConnection, std::size_t secondaryConnections, class Op>
   auto makeNode(Op op)
   {
-    constexpr auto makePrimary = [] {if constexpr(hasPrimaryConnection) { return OpenConnectionPlaceHolder(); } else { return NoPrimary(); }};
-    return makeNode(op, makeOpenConnections(std::make_index_sequence<secondaryConnections>()), makePrimary());
+    constexpr auto makePrimary = [] 
+    {
+      if constexpr(hasPrimaryConnection) 
+      {
+        return std::make_tuple(PrimaryOpenConnectionPlaceHolder()); 
+      }
+      else 
+      { 
+        return std::tuple<>();
+      }
+    };
+    return makeNode(op, std::tuple_cat(makeOpenConnections(std::make_index_sequence<secondaryConnections>()), makePrimary()));
   }
 }

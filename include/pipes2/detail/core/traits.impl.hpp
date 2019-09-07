@@ -16,14 +16,14 @@ namespace tillh::pipes2::detail
   template<class Source, class Tree>
   struct isSender<Input<Source, Tree>> : std::true_type {};
 
-  template<class Op, class Connections, class PrimaryConnection>
-  struct isSender<Node<Op, Connections, PrimaryConnection>> : std::true_type {};
+  template<class Op, class Connections>
+  struct isSender<Node<Op, Connections>> : std::true_type {};
 
   template<class Op, class Connections>
   struct isReceiver<Output<Op, Connections>> : std::true_type {};
 
-  template<class Op, class Connections, class PrimaryConnection>
-  struct isReceiver<Node<Op, Connections, PrimaryConnection>> : std::true_type {};
+  template<class Op, class Connections>
+  struct isReceiver<Node<Op, Connections>> : std::true_type {};
 
   template<>
   struct isReceiver<OpenConnectionPlaceHolder> : std::true_type {};
@@ -46,17 +46,17 @@ namespace tillh::pipes2::detail
 
 namespace tillh::pipes2
 {
-  template<>
-  struct canPrimaryConnectT<NoPrimary> : std::false_type {};
-
   template<class Op, class Connections>
   struct canPrimaryConnectT<Output<Op, Connections>> : std::false_type {};
 
   template<>
-  struct canPrimaryConnectT<OpenConnectionPlaceHolder> : std::true_type {};
+  struct canPrimaryConnectT<PrimaryOpenConnectionPlaceHolder> : std::true_type {};
 
-  template<class Op, class Connections, class PrimaryConnection>
-  struct canPrimaryConnectT<Node<Op, Connections, PrimaryConnection>> : canPrimaryConnectT<PrimaryConnection> {};
+  template<>
+  struct canPrimaryConnectT<OpenConnectionPlaceHolder> : std::false_type {};
+
+  template<class Op, class Connections>
+  struct canPrimaryConnectT<Node<Op, Connections>> : canPrimaryConnectT<last_element<Connections>> {};
 }
 
 namespace tillh::pipes2
@@ -64,15 +64,12 @@ namespace tillh::pipes2
   template<>
   struct canSecondaryConnectT<OpenConnectionPlaceHolder> : std::true_type {};
 
+  template<>
+  struct canSecondaryConnectT<PrimaryOpenConnectionPlaceHolder> : std::false_type {};
+
   template<class Op, class Connections>
   struct canSecondaryConnectT<Output<Op, Connections>> : std::false_type {};
 
-  template<class Op, class... Connections, class PrimaryConnection>
-  struct canSecondaryConnectT<Node<Op, std::tuple<Connections...>, PrimaryConnection>> : std::disjunction<canSecondaryConnectT<Connections>...> {};
-}
-
-namespace tillh::pipes2
-{
-  template<class Op, class Connections, class PrimaryConnection>
-  struct hasPrimaryT<Node<Op, Connections, PrimaryConnection>> : std::negation<std::is_same<PrimaryConnection, NoPrimary>> {};
+  template<class Op, class... Connections>
+  struct canSecondaryConnectT<Node<Op, std::tuple<Connections...>>> : std::disjunction<canSecondaryConnectT<Connections>...> {};
 }

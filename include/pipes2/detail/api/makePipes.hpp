@@ -11,7 +11,7 @@
 #include "pipes2/detail/pipes/makeSource.hpp"
 #include "pipes2/detail/pipes/makeSink.hpp"
 
-#include "pipes2/detail/api/ensureValidOutput.hpp"
+#include "pipes2/detail/api/ensureValidInputOutput.hpp"
 
 // throughput pipes
 namespace tillh::pipes2

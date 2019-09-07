@@ -3,6 +3,8 @@
 #include <type_traits>
 #include <tuple>
 
+#include "pipes2/detail/util/FWD.hpp"
+
 namespace tillh::pipes2
 {
   template<class... T>
@@ -20,28 +22,28 @@ namespace tillh::pipes2
   template<class T> using remove_cv_ref_t = typename remove_cv_ref<T>::type;
 
   template<std::size_t pickIndex, std::size_t currentIndex, class Tuple, class T >
-  auto pick(Tuple& tuple, T& t)
+  auto pick(Tuple&& tuple, T&& t)
   {
     if constexpr(pickIndex == currentIndex)
     {
-      return std::move(t);
+      return FWD(t);
     }
     else
     {
-      return std::move(std::get<currentIndex>(tuple));
+      return std::get<currentIndex>(FWD(tuple));
     }
   }
 
   template<std::size_t index, std::size_t... Is, class Tuple, class T>
-  auto tuple_replace_impl(Tuple& tuple, T& t, std::index_sequence<Is...>)
+  auto tuple_replace_impl(Tuple&& tuple, T&& t, std::index_sequence<Is...>)
   {
-    return std::make_tuple(std::move(pick<index, Is>(tuple, t))...);
+    return std::make_tuple(std::move(pick<index, Is>(FWD(tuple), FWD(t)))...);
   }
 
   template<std::size_t index, class Tuple, class T>
-  auto tuple_replace(Tuple& tuple, T& t)
+  auto tuple_replace(Tuple&& tuple, T&& t)
   {
-    return tuple_replace_impl<index>(tuple, t, std::make_index_sequence<std::tuple_size_v<Tuple>>());
+    return tuple_replace_impl<index>(FWD(tuple), FWD(t), std::make_index_sequence<std::tuple_size_v<remove_cv_ref_t<Tuple>>>());
   }
 
   template<class T>
@@ -55,9 +57,15 @@ namespace tillh::pipes2
   struct TypeList {};
 
   template<class... Ts>
-  auto typeList(Type<std::tuple<Ts...>>)
+  constexpr auto typeList(Type<std::tuple<Ts...>>)
   {
     return TypeList<Ts...>{};
+  }
+
+  template<class... Ts, class T>
+  constexpr auto append(TypeList<Ts...>, Type<T>)
+  {
+    return TypeList<Ts..., T>();
   }
 
   namespace detail
@@ -136,4 +144,19 @@ namespace tillh::pipes2
 
   template<class... Ts>
   using sum = int_constant<(Ts::value + ...)>;
+}
+
+namespace tillh::pipes2
+{
+  template<class Tuple>
+  constexpr static std::size_t tuple_back = std::tuple_size_v<Tuple> -1;
+
+  template<class Tuple>
+  using last_element = std::tuple_element_t<tuple_back<Tuple>, Tuple>;
+
+  template<class Tuple>
+  decltype(auto) getLast(Tuple&& tuple)
+  {
+    return std::get<tuple_back<remove_cv_ref_t<Tuple>>>(FWD(tuple));
+  }
 }

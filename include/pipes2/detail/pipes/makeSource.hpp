@@ -17,7 +17,7 @@ namespace tillh::pipes2::detail
   template<class T>
   auto makeSourceInput(T&& t)
   {
-    return makeInput(std::forward<T>(t), OpenConnectionPlaceHolder());
+    return makeInput(std::forward<T>(t), PrimaryOpenConnectionPlaceHolder());
   }
 
   template<class Range, std::enable_if_t<is_range_v<remove_cv_ref_t<Range>>, bool> = true>

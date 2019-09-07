@@ -20,8 +20,8 @@ namespace tillh::pipes2
   template<>
   struct openCountT<OpenConnectionPlaceHolder> : int_constant<1> {};
 
-  template<class Op, class... Connections, class Primary>
-  struct openCountT<Node<Op, std::tuple<Connections...>, Primary>> : sum<openCountT<Connections>...> {};
+  template<class Op, class... Connections>
+  struct openCountT<Node<Op, std::tuple<Connections...>>> : sum<openCountT<Connections>...> {};
 
   template<class T>
   constexpr static std::size_t openCount = openCountT<T>::value;
@@ -77,15 +77,34 @@ namespace tillh::pipes2
       ));
   }
 }
+
 namespace tillh::pipes2
 {
-  enum class ConnectMode{Primary, Secondary};
+  enum class ConnectMode { Primary, Secondary, Any };
 
   template<ConnectMode mode>
   using mode_constant = std::integral_constant<ConnectMode, mode>;
 
   using primary_constant = mode_constant<ConnectMode::Primary>;
   using secondary_constant = mode_constant<ConnectMode::Secondary>;
+  using any_constant = mode_constant<ConnectMode::Secondary>;
+
+  template<class T>
+  decltype(auto) clearPrimary(T&& t)
+  {
+    return FWD(t);
+  }
+
+  inline auto clearPrimary(PrimaryOpenConnectionPlaceHolder)
+  {
+    return OpenConnectionPlaceHolder();
+  }
+
+  template<class Op, class Connections>
+  auto clearPrimary(Node<Op, Connections>&& node)
+  {
+    return makeNode(std::move(node.op), tuple_replace<tuple_back<Connections>>(std::move(node.connections), clearPrimary(getLast(node.connections))));
+  }
 
   template<class Connection, std::size_t... Indices, class NewConnects>
   auto connectIndices(Connection&& connection, std::index_sequence<Indices...>, NewConnects newConnects)
@@ -96,7 +115,7 @@ namespace tillh::pipes2
     }
     else
     {
-      return connectImpl(secondary_constant(), std::forward<Connection>(connection), std::get<Indices>(newConnects)...);
+      return clearPrimary(connectImpl(secondary_constant(), std::forward<Connection>(connection), std::get<Indices>(newConnects)...));
     }
   }
 
@@ -114,6 +133,7 @@ namespace tillh::pipes2
     return connectIndexWise_impl(std::forward<Connections>(connections), indices, newConnects, std::make_index_sequence<connectionCount>());
   }
 }
+
 namespace tillh::pipes2
 {
   template<class Node, class... Children>
@@ -122,37 +142,48 @@ namespace tillh::pipes2
     static_assert(sizeof...(children) > 0);
     static_assert(sizeof...(children) <= openCount<remove_cv_ref_t<Node>>);
     auto indices = getIndices<sizeof...(children), remove_cv_ref_t<Node>>();
-    return makeNode(std::forward<Node>(node).op, connectIndexWise(std::forward<Node>(node).connections, indices, std::forward_as_tuple(children...)), std::forward<Node>(node).primaryConnection);
+    return makeNode(std::forward<Node>(node).op, connectIndexWise(std::forward<Node>(node).connections, indices, std::forward_as_tuple(children...)));
   }
 
   template<class Node, class Child>
   auto connectPrimaryImpl(Node&& node, Child&& child)
   {
-    return makeNode(FWD(node).op, FWD(node).connections, connectImpl(primary_constant(), FWD(node).primaryConnection, FWD(child)));
+    static_assert(canPrimaryConnect<remove_cv_ref_t<Node>>);
+    constexpr std::size_t lastIndex = tuple_back<typename remove_cv_ref_t<Node>::Connections>;
+    return makeNode(FWD(node).op, tuple_replace<lastIndex>(FWD(node).connections, connectImpl(primary_constant(), getLast(FWD(node).connections), FWD(child))));
   }
-  
+
   template<ConnectMode mode, class Lhs, class... Rhss>
   auto connectImpl(mode_constant<mode>, Lhs&& lhs, Rhss&& ... rhss)
   {
     static_assert(sizeof...(Rhss) > 0, "at least 1 rhs needed");
 
-    if constexpr(std::is_same_v<remove_cv_ref_t<Lhs>, OpenConnectionPlaceHolder>)
+    if constexpr(mode == ConnectMode::Secondary)
     {
-      static_assert(sizeof...(Rhss) == 1, "there should never be a call to connect one placeholder with multiple nodes");
-      return getFirst(FWD(rhss)...);
-    }
-    else
-    {
-      if constexpr(mode == ConnectMode::Secondary)
+      if constexpr(std::is_same_v<remove_cv_ref_t<Lhs>, OpenConnectionPlaceHolder>)
+      {
+        static_assert(sizeof...(Rhss) == 1, "there should never be a call to connect one placeholder with multiple nodes");
+        return getFirst(FWD(rhss)...);
+      }
+      else
       {
         return evaluateIfFinished(connectSecondaryImpl(FWD(lhs), FWD(rhss)...));
       }
-      else if(mode == ConnectMode::Primary)
+    }
+    else if(mode == ConnectMode::Primary)
+    {
+      if constexpr(std::is_same_v<remove_cv_ref_t<Lhs>, PrimaryOpenConnectionPlaceHolder>)
+      {
+        static_assert(sizeof...(Rhss) == 1, "there should never be a call to connect one placeholder with multiple nodes");
+        return getFirst(FWD(rhss)...);
+      }
+      else
       {
         static_assert(sizeof...(Rhss) == 1, "can only primaryconnect 1 at a time");
         return evaluateIfFinished(connectPrimaryImpl(FWD(lhs), FWD(rhss)...));
       }
     }
+
   }
 
   template<ConnectMode mode, class Source, class Node, class... Rhss>
