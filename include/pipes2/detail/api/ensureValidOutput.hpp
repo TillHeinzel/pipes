@@ -35,3 +35,31 @@ namespace tillh::pipes2
     return {FWD(t)};
   }
 }
+
+namespace tillh::pipes2
+{
+  template<class T, std::enable_if_t<detail::sends<T>, bool> = true>
+  decltype(auto) ensureValidInput(T && t)
+  {
+    return FWD(t);
+  }
+
+  template<class T, std::enable_if_t<!detail::sends<T>&& detail::canSend<T>, bool> = true>
+  auto ensureValidInput(T && t)
+  {
+    return detail::makeSource(FWD(t));
+  }
+
+  template<class T>
+  struct ensureValidInputT
+  {
+    decltype(auto) operator() () { return ensureValidInput(FWD(t)); }
+    T t;
+  };
+
+  template<class T>
+  ensureValidInputT<T&&> ensureValidInputF(T&& t)
+  {
+    return {FWD(t)};
+  }
+}

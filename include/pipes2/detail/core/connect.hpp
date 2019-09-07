@@ -158,7 +158,17 @@ namespace tillh::pipes2
   template<ConnectMode mode, class Source, class Node, class... Rhss>
   auto connectImpl(mode_constant<mode> m, Input<Source, Node> lhs, Rhss&& ... rhss)
   {
-    return makeInput(std::move(lhs.source), connectImpl(m, std::move(lhs.node), FWD(rhss)...));
+    auto result = makeInput(std::move(lhs.source), connectImpl(m, std::move(lhs.node), FWD(rhss)...));
+
+    if constexpr(detail::isCompleted<decltype(result)>)
+    {
+      result.source.run(result.node);
+      return;
+    }
+    else
+    {
+      return result;
+    }
   }
 }
 
@@ -169,15 +179,20 @@ namespace tillh::pipes2
   template<class T>
   ensureValidOutputT<T&&> ensureValidOutputF(T&& t);
 
+  template<class T> struct ensureValidInputT;
+
+  template<class T>
+  ensureValidInputT<T&&> ensureValidInputF(T&& t);
+
   template<class Lhs, class... Rhs>
   auto connectPrimary(Lhs&& lhs, Rhs&& ... rhs)
   {
-    return connectImpl(primary_constant(), FWD(lhs), ensureValidOutputF(FWD(rhs))()...);
+    return connectImpl(primary_constant(), ensureValidInputF(FWD(lhs))(), ensureValidOutputF(FWD(rhs))()...);
   }
 
   template<class Lhs, class... Rhs>
   auto connectSecondary(Lhs&& lhs, Rhs&& ... rhs)
   {
-    return connectImpl(secondary_constant(), FWD(lhs), ensureValidOutputF(FWD(rhs))()...);
+    return connectImpl(secondary_constant(), ensureValidInputF(FWD(lhs))(), ensureValidOutputF(FWD(rhs))()...);
   }
 }
