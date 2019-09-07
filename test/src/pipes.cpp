@@ -17,7 +17,6 @@ TEST(pipeTraits, transform)
   static_assert(is_node_v<type>);
   static_assert(!is_range_v<type>);
   static_assert(!detail::is_detected_v<begin_expression, type>);
-  static_assert(firstOpen(Type<type>()) == 0);
 }
 
 TEST(pipeTraits, filter)
@@ -28,7 +27,6 @@ TEST(pipeTraits, filter)
   static_assert(is_node_v<type>);
   static_assert(!is_range_v<type>);
   static_assert(!detail::is_detected_v<begin_expression, type>);
-  static_assert(firstOpen(Type<type>()) == 0);
 }
 
 TEST(pipeTraits, demux1)

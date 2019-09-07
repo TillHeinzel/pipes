@@ -33,14 +33,14 @@ namespace tillh::pipes2
   {
     static_assert(sizeof...(Outputs) > 0, "demux requires at least one output");
     auto node = makeNode<false, sizeof...(Outputs)>(Demux());
-    return detail::connectAllNonRecursive(node, detail::ensureValidOutput(std::forward<Outputs>(outputs))...);
+    return connect(secondary_constant(), node, detail::ensureValidOutput(std::forward<Outputs>(outputs))...);
   }
 
   template<class Output>
   auto tee(Output&& output)
   {
     auto node = makeNode<true, 1>(Demux());
-    return connectSecondary(node, detail::ensureValidOutput(std::forward<Output>(output)));
+    return connect(secondary_constant(), node, detail::ensureValidOutput(std::forward<Output>(output)));
   }
 
   template<class F, class Output>
@@ -59,7 +59,7 @@ namespace tillh::pipes2
   auto switch_(Case<Conditions, Outputs>... cases)
   {
     auto node = makeNode<false, sizeof...(Conditions)>(makeSwitch(std::make_tuple(std::move(cases.condition)...)));
-    return detail::connectAllNonRecursive(node, std::move(cases.output)...);
+    return connect(secondary_constant(), node, std::move(cases.output)...);
   }
 
   template<class Condition, class OutputTrue, class OutputFalse>
@@ -78,7 +78,7 @@ namespace tillh::pipes2
   {
     static_assert(sizeof...(Outputs) > 0, "unzip requires at least one output");
     auto node = makeNode<false, sizeof...(Outputs)>(Unzip());
-    return detail::connectAllNonRecursive(node, detail::ensureValidOutput(std::forward<Outputs>(outputs))...);
+    return connect(secondary_constant(), node, detail::ensureValidOutput(std::forward<Outputs>(outputs))...);
   }
 
   inline static constexpr OpenConnectionPlaceHolder _ = {};

@@ -1,13 +1,14 @@
 #pragma once
 
 #include <type_traits>
+#include <tuple>
 
 namespace tillh::pipes2
 {
-  template<class T>
+  template<class... T>
   struct fail_assertT : std::false_type {};
 
-  template<class T>
+  template<class... T>
   constexpr static bool fail_assert = false;
 
   template< class T >
@@ -49,6 +50,15 @@ namespace tillh::pipes2
     constexpr Type() = default;
     using type = T;
   };
+
+  template<class... Ts>
+  struct TypeList {};
+
+  template<class... Ts>
+  auto typeList(Type<std::tuple<Ts...>>)
+  {
+    return TypeList<Ts...>{};
+  }
 
   namespace detail
   {
@@ -109,4 +119,21 @@ namespace tillh::pipes2
 
   template<class... Ts>
   constexpr bool is_unique_v = is_unique<Ts...>::value;
+}
+
+namespace tillh::pipes2
+{
+  template<class T, class... Ts>
+  decltype(auto) getFirst(T&& t, Ts&& ...)
+  {
+    return std::forward<T>(t);
+  }
+}
+namespace tillh::pipes2
+{
+  template<std::size_t I>
+  using int_constant = std::integral_constant<std::size_t, I>;
+
+  template<class... Ts>
+  using sum = int_constant<(Ts::value + ...)>;
 }
