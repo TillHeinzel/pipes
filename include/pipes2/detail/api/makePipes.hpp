@@ -8,6 +8,8 @@
 #include "pipes2/detail/pipes/switch.hpp"
 #include "pipes2/detail/pipes/sinks.hpp"
 #include "pipes2/detail/pipes/sources.hpp"
+#include "pipes2/detail/pipes/makeSource.hpp"
+#include "pipes2/detail/pipes/makeSink.hpp"
 
 #include "pipes2/detail/api/ensureValidOutput.hpp"
 
