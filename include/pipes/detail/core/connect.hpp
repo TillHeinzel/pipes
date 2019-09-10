@@ -33,6 +33,19 @@ namespace tillh
       return FWD(t);
     }
 
+    template<std::size_t index, class Op, class Connections, class Child >
+    auto replace(Node<Op, Connections>&& node, Child&& child)
+    {
+      return makeNode(std::move(node.op), util::tuple_replace<index>(std::move(node.connections), FWD(child)));
+    }
+
+    template<class Op, class Connections, class Child >
+    auto replace_last(Node<Op, Connections>&& node, Child&& child)
+    {
+      constexpr auto lastIndex = util::tuple_back<Connections>;
+      return replace<lastIndex>(std::move(node), FWD(child));
+    }
+
     inline auto clearPrimary(PrimaryOpenConnectionPlaceHolder)
     {
       return OpenConnectionPlaceHolder();
@@ -70,13 +83,7 @@ namespace tillh
       static_assert(std::tuple_size_v<Indices> == connectionCount);
       return connectIndexWise_impl(std::forward<Connections>(connections), indices, newConnects, std::make_index_sequence<connectionCount>());
     }
-  }
-}
 
-namespace tillh
-{
-  namespace pipes
-  {
     template<class Node, class... Children>
     auto connectSecondaryImpl(Node&& node, Children&& ... children)
     {
@@ -85,15 +92,37 @@ namespace tillh
       auto indices = getIndices<sizeof...(children), util::remove_cv_ref_t<Node>>();
       return makeNode(std::forward<Node>(node).op, connectIndexWise(std::forward<Node>(node).connections, indices, std::forward_as_tuple(children...)));
     }
+  }
+}
 
-    template<class Node, class Child>
-    auto connectPrimaryImpl(Node&& node, Child&& child)
+namespace tillh
+{
+  namespace pipes
+  {
+    template<class Child>
+    decltype(auto) connectPrimaryImpl(PrimaryOpenConnectionPlaceHolder, Child&& child)
     {
-      static_assert(canPrimaryConnect<util::remove_cv_ref_t<Node>>);
-      constexpr std::size_t lastIndex = util::tuple_back<typename util::remove_cv_ref_t<Node>::Connections>;
-      return makeNode(FWD(node).op, util::tuple_replace<lastIndex>(FWD(node).connections, connectImpl(primary_constant(), util::getLast(FWD(node).connections), FWD(child))));
+      return FWD(child);
     }
+    template<class Child>
+    auto connectPrimaryImpl(OpenConnectionPlaceHolder, Child&& child)
+    {
+      static_assert(util::fail_assert<Child>, "bug: cannot primary connect to secondary placeholder");
+    }
+    
+    template<class Op, class Connections, class Child>
+    auto connectPrimaryImpl(Node<Op, Connections>&& node, Child&& child)
+    {
+      auto newNode = replace_last(std::move(node), connectPrimaryImpl(util::getLast(std::move(node.connections)), FWD(child)));
+      return evaluateIfFinished(std::move(newNode));
+    }
+  }
+}
 
+namespace tillh
+{
+  namespace pipes
+  {
     template<ConnectMode mode, class Lhs, class... Rhss>
     auto connectImpl(mode_constant<mode>, Lhs&& lhs, Rhss&& ... rhss)
     {
@@ -113,18 +142,9 @@ namespace tillh
       }
       else if(mode == ConnectMode::Primary)
       {
-        if constexpr(std::is_same_v<util::remove_cv_ref_t<Lhs>, PrimaryOpenConnectionPlaceHolder>)
-        {
-          static_assert(sizeof...(Rhss) == 1, "there should never be a call to connect one placeholder with multiple nodes");
-          return util::getFirst(FWD(rhss)...);
-        }
-        else
-        {
-          static_assert(sizeof...(Rhss) == 1, "can only primaryconnect 1 at a time");
-          return evaluateIfFinished(connectPrimaryImpl(FWD(lhs), FWD(rhss)...));
-        }
+        static_assert(sizeof...(Rhss) == 1, "can only primaryconnect 1 at a time");
+        return connectPrimaryImpl(FWD(lhs), FWD(rhss)...);
       }
-
     }
 
     template<ConnectMode mode, class Source, class Node, class... Rhss>
