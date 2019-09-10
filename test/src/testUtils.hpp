@@ -47,3 +47,12 @@ namespace testUtils
     }
   };
 }
+
+template<class T>
+struct is_output : std::false_type {};
+
+template<class Op, class Outputs>
+struct is_output<tillh::pipes::Output<Op, Outputs>> : std::true_type {};
+
+template<class T>
+constexpr static bool is_output_v = is_output<T>::value;

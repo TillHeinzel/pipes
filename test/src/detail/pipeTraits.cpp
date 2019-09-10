@@ -5,6 +5,7 @@
 #include <pipes/pipes.hpp>
 
 #include "is_node.hpp"
+#include "../testUtils.hpp"
 
 using namespace tillh::pipes::api;
 using namespace tillh::pipes::util;
