@@ -20,13 +20,6 @@ namespace tillh
 {
   namespace pipes
   {
-    enum class ConnectMode { Primary, Secondary };
-
-    template<ConnectMode mode>
-    using mode_constant = std::integral_constant<ConnectMode, mode>;
-
-    using primary_constant = mode_constant<ConnectMode::Primary>;
-    using secondary_constant = mode_constant<ConnectMode::Secondary>;
     template<class Connection, std::size_t... Indices, class NewConnects>
     auto connectIndices(Connection&& connection, std::index_sequence<Indices...>, NewConnects newConnects)
     {
@@ -112,6 +105,15 @@ namespace tillh
 {
   namespace pipes
   {
+    enum class ConnectMode { Primary, Secondary };
+
+    template<ConnectMode mode>
+    using mode_constant = std::integral_constant<ConnectMode, mode>;
+
+    using primary_constant = mode_constant<ConnectMode::Primary>;
+    using secondary_constant = mode_constant<ConnectMode::Secondary>;
+
+
     template<ConnectMode mode, class Lhs, class... Rhss>
     auto connectImpl(mode_constant<mode>, Lhs&& lhs, Rhss&& ... rhss)
     {
