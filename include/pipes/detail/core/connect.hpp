@@ -14,6 +14,7 @@
 
 #include "pipes/detail/core/openCount.hpp"
 #include "pipes/detail/core/getIndices.hpp"
+#include "pipes/detail/core/clearPrimary.hpp"
 
 namespace tillh
 {
@@ -26,24 +27,6 @@ namespace tillh
 
     using primary_constant = mode_constant<ConnectMode::Primary>;
     using secondary_constant = mode_constant<ConnectMode::Secondary>;
-    
-    template<class T>
-    decltype(auto) clearPrimary(T&& t)
-    {
-      return FWD(t);
-    }
-
-    inline auto clearPrimary(PrimaryOpenConnectionPlaceHolder)
-    {
-      return OpenConnectionPlaceHolder();
-    }
-
-    template<class Op, class Connections>
-    auto clearPrimary(Node<Op, Connections>&& node)
-    {
-      return apply_last(std::move(node), [](auto&& connection) {return clearPrimary(FWD(connection)); });
-    }
-
     template<class Connection, std::size_t... Indices, class NewConnects>
     auto connectIndices(Connection&& connection, std::index_sequence<Indices...>, NewConnects newConnects)
     {
@@ -53,7 +36,7 @@ namespace tillh
       }
       else
       {
-        return clearPrimary(connectImpl(secondary_constant(), FWD(connection), std::get<Indices>(newConnects)...));
+        return connectSecondaryImpl(FWD(connection), std::get<Indices>(newConnects)...);
       }
     }
 
@@ -186,7 +169,7 @@ namespace tillh
     template<class Lhs, class... Rhs>
     auto connectSecondary(Lhs&& lhs, Rhs&& ... rhs)
     {
-      return connectImpl(secondary_constant(), ensureValidInputF(FWD(lhs))(), ensureValidOutputF(FWD(rhs))()...);
+      return connectImpl(secondary_constant(), ensureValidInputF(FWD(lhs))(), clearPrimary(ensureValidOutputF(FWD(rhs))())...);
     }
   }
 }
