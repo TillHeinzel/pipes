@@ -66,14 +66,14 @@ namespace tillh
       }
       else
       {
-        return clearPrimary(connectImpl(secondary_constant(), std::forward<Connection>(connection), std::get<Indices>(newConnects)...));
+        return clearPrimary(connectImpl(secondary_constant(), FWD(connection), std::get<Indices>(newConnects)...));
       }
     }
 
     template<class Connections, class... Indices, class NewConnects, std::size_t... Is>
     auto connectIndexWise_impl(Connections&& connections, std::tuple<Indices...> indices, NewConnects newConnects, std::index_sequence<Is...>)
     {
-      return std::make_tuple(connectIndices(std::get<Is>(std::forward<Connections>(connections)), std::get<Is>(indices), newConnects)...);
+      return std::make_tuple(connectIndices(std::get<Is>(FWD(connections)), std::get<Is>(indices), newConnects)...);
     }
 
     template<class Connections, class Indices, class NewConnects>
@@ -81,7 +81,24 @@ namespace tillh
     {
       constexpr auto connectionCount = std::tuple_size_v<util::remove_cv_ref_t<Connections>>;
       static_assert(std::tuple_size_v<Indices> == connectionCount);
-      return connectIndexWise_impl(std::forward<Connections>(connections), indices, newConnects, std::make_index_sequence<connectionCount>());
+      return connectIndexWise_impl(FWD(connections), indices, newConnects, std::make_index_sequence<connectionCount>());
+    }
+  }
+}
+
+namespace tillh
+{
+  namespace pipes
+  {
+    template<class Child>
+    decltype(auto) connectSecondaryImpl(OpenConnectionPlaceHolder, Child&& child)
+    {
+      return FWD(child);
+    }
+    template<class Child>
+    auto connectSecondaryImpl(PrimaryOpenConnectionPlaceHolder, Child&& child)
+    {
+      static_assert(util::fail_assert<Child>, "bug: cannot secondary connect to primary placeholder");
     }
 
     template<class Node, class... Children>
@@ -90,7 +107,7 @@ namespace tillh
       static_assert(sizeof...(children) > 0);
       static_assert(sizeof...(children) <= openCount<util::remove_cv_ref_t<Node>>);
       auto indices = getIndices<sizeof...(children), util::remove_cv_ref_t<Node>>();
-      return makeNode(std::forward<Node>(node).op, connectIndexWise(std::forward<Node>(node).connections, indices, std::forward_as_tuple(children...)));
+      return evaluateIfFinished(makeNode(FWD(node).op, connectIndexWise(FWD(node).connections, indices, std::forward_as_tuple(children...))));
     }
   }
 }
@@ -130,15 +147,7 @@ namespace tillh
 
       if constexpr(mode == ConnectMode::Secondary)
       {
-        if constexpr(std::is_same_v<util::remove_cv_ref_t<Lhs>, OpenConnectionPlaceHolder>)
-        {
-          static_assert(sizeof...(Rhss) == 1, "there should never be a call to connect one placeholder with multiple nodes");
-          return util::getFirst(FWD(rhss)...);
-        }
-        else
-        {
-          return evaluateIfFinished(connectSecondaryImpl(FWD(lhs), FWD(rhss)...));
-        }
+        return connectSecondaryImpl(FWD(lhs), FWD(rhss)...);
       }
       else if(mode == ConnectMode::Primary)
       {
