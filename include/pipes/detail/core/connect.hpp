@@ -40,6 +40,17 @@ namespace tillh
       return replace<lastIndex>(std::move(node), FWD(child));
     }
 
+    template<std::size_t index, class Op, class Connections, class F>
+    auto apply(Node<Op, Connections>&& node, F f)
+    {
+      return replace<index>(std::move(node), f(std::get<index>(std::move(node).connections)));
+    }
+    template<class Op, class Connections, class F>
+    auto apply_last(Node<Op, Connections>&& node, F f)
+    {
+      return apply<util::tuple_back<Connections>>(std::move(node), f);
+    }
+    
     template<class T>
     decltype(auto) clearPrimary(T&& t)
     {
@@ -54,7 +65,7 @@ namespace tillh
     template<class Op, class Connections>
     auto clearPrimary(Node<Op, Connections>&& node)
     {
-      return makeNode(std::move(node.op), util::tuple_replace<util::tuple_back<Connections>>(std::move(node.connections), clearPrimary(util::getLast(node.connections))));
+      return apply_last(std::move(node), [](auto&& connection) {return clearPrimary(FWD(connection)); });
     }
 
     template<class Connection, std::size_t... Indices, class NewConnects>
@@ -95,6 +106,7 @@ namespace tillh
     {
       return FWD(child);
     }
+
     template<class Child>
     auto connectSecondaryImpl(PrimaryOpenConnectionPlaceHolder, Child&& child)
     {
@@ -107,7 +119,7 @@ namespace tillh
       static_assert(sizeof...(children) > 0);
       static_assert(sizeof...(children) <= openCount<util::remove_cv_ref_t<Node>>);
       auto indices = getIndices<sizeof...(children), util::remove_cv_ref_t<Node>>();
-      return evaluateIfFinished(makeNode(FWD(node).op, connectIndexWise(FWD(node).connections, indices, std::forward_as_tuple(children...))));
+      return makeNode(FWD(node).op, connectIndexWise(FWD(node).connections, indices, std::forward_as_tuple(children...)));
     }
   }
 }
@@ -121,6 +133,7 @@ namespace tillh
     {
       return FWD(child);
     }
+
     template<class Child>
     auto connectPrimaryImpl(OpenConnectionPlaceHolder, Child&& child)
     {
@@ -130,8 +143,8 @@ namespace tillh
     template<class Op, class Connections, class Child>
     auto connectPrimaryImpl(Node<Op, Connections>&& node, Child&& child)
     {
-      auto newNode = replace_last(std::move(node), connectPrimaryImpl(util::getLast(std::move(node.connections)), FWD(child)));
-      return evaluateIfFinished(std::move(newNode));
+      auto connect = [&child](auto&& connection) {return connectPrimaryImpl(FWD(connection), FWD(child)); };
+      return apply_last(std::move(node), connect);
     }
   }
 }

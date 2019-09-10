@@ -38,7 +38,7 @@ namespace tillh
     struct PrimaryOpenConnectionPlaceHolder {};
 
     template<class Op, class Connections>
-    auto makeNode(Op op, Connections connections)
+    auto makeNodeDirect(Op op, Connections connections)
     {
       return Node<Op, Connections>(std::move(connections), std::move(op));
     }
@@ -71,7 +71,7 @@ namespace tillh
           return std::tuple<>();
         }
       };
-      return makeNode(op, std::tuple_cat(makeOpenConnections(std::make_index_sequence<secondaryConnections>()), makePrimary()));
+      return makeNodeDirect(op, std::tuple_cat(makeOpenConnections(std::make_index_sequence<secondaryConnections>()), makePrimary()));
     }
   }
 }

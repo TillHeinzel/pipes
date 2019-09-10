@@ -19,11 +19,10 @@ namespace tillh
       return makeOutput(std::move(node.op), std::move(node.connections));
     }
 
-    template<class Node>
-    auto evaluateIfFinished(Node node)
+    template<class Op, class Connections>
+    auto evaluateIfFinished(Node<Op, Connections> node)
     {
-      static_assert(!is_output_v<Node>);
-      if constexpr(!canPrimaryConnect<Node> && !canSecondaryConnect<Node>)
+      if constexpr(!canPrimaryConnect<Node<Op, Connections>> && !canSecondaryConnect<Node<Op, Connections>>)
       {
         return evaluate(std::move(node));
       }
@@ -31,6 +30,12 @@ namespace tillh
       {
         return node;
       }
+    }
+       
+    template<class Op, class Connections>
+    auto makeNode(Op&& op, Connections&& connections)
+    {
+      return evaluateIfFinished(makeNodeDirect(FWD(op), FWD(connections)));
     }
   }
 }
