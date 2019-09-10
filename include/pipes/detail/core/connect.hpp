@@ -27,12 +27,6 @@ namespace tillh
     using primary_constant = mode_constant<ConnectMode::Primary>;
     using secondary_constant = mode_constant<ConnectMode::Secondary>;
 
-    template<class T>
-    decltype(auto) clearPrimary(T&& t)
-    {
-      return FWD(t);
-    }
-
     template<std::size_t index, class Op, class Connections, class Child >
     auto replace(Node<Op, Connections>&& node, Child&& child)
     {
@@ -44,6 +38,12 @@ namespace tillh
     {
       constexpr auto lastIndex = util::tuple_back<Connections>;
       return replace<lastIndex>(std::move(node), FWD(child));
+    }
+
+    template<class T>
+    decltype(auto) clearPrimary(T&& t)
+    {
+      return FWD(t);
     }
 
     inline auto clearPrimary(PrimaryOpenConnectionPlaceHolder)
