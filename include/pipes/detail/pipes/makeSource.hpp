@@ -22,7 +22,7 @@ namespace tillh
       return makeInput(std::forward<T>(t), PrimaryOpenConnectionPlaceHolder());
     }
 
-    template<class Range, std::enable_if_t<util::is_range_v<util::remove_cv_ref_t<Range>>, bool> = true>
+    template<class Range, std::enable_if_t<util::is_range<util::remove_cv_ref_t<Range>>, bool> = true>
     auto makeSource(Range && range)
     {
       if constexpr(std::is_rvalue_reference_v<decltype(range)>)

@@ -106,14 +106,14 @@ namespace tillh
       template<class Pushable>
       auto push_back(Pushable& pushable)
       {
-        static_assert(util::is_pushable_v<Pushable>);
+        static_assert(util::is_pushable<Pushable>);
         return makeIteratorSink(std::back_inserter(pushable));
       }
 
       template<class Collection>
       auto override(Collection& collection)
       {
-        static_assert(util::is_range_v<Collection>);
+        static_assert(util::is_range<Collection>);
         return makeIteratorSink(collection.begin());
       }
 
@@ -132,7 +132,7 @@ namespace tillh
       template<class It>
       auto iterator(It it)
       {
-        static_assert(util::is_output_iterator_v<It>);
+        static_assert(util::is_output_iterator<It>);
         return makeIteratorSink(it);
       }
 

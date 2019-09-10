@@ -18,8 +18,7 @@ TEST(pipeTraits, transform)
   using type = remove_cv_ref_t<decltype(trans)>;
   static_assert(canPrimaryConnect<type>);
   static_assert(is_node_v<type>);
-  static_assert(!is_range_v<type>);
-  static_assert(!is_detected_v<begin_expression, type>);
+  static_assert(!is_range<type>);
 }
 
 TEST(pipeTraits, filter)
@@ -28,8 +27,7 @@ TEST(pipeTraits, filter)
   using type = remove_cv_ref_t<decltype(filte)>;
   static_assert(canPrimaryConnect<type>);
   static_assert(is_node_v<type>);
-  static_assert(!is_range_v<type>);
-  static_assert(!is_detected_v<begin_expression, type>);
+  static_assert(!is_range<type>);
 }
 
 TEST(pipeTraits, demux1)
@@ -39,7 +37,7 @@ TEST(pipeTraits, demux1)
   using type = remove_cv_ref_t<decltype(demu)>;
   static_assert(is_node_v<type>);
   static_assert(is_output_v<type>);
-  static_assert(!is_range_v<type>);
+  static_assert(!is_range<type>);
 }
 
 TEST(pipeTraits, demux2)
@@ -50,5 +48,5 @@ TEST(pipeTraits, demux2)
   using type = remove_cv_ref_t<decltype(demu)>;
   static_assert(is_node_v<type>);
   static_assert(is_output_v<type>);
-  static_assert(!is_range_v<type>);
+  static_assert(!is_range<type>);
 }

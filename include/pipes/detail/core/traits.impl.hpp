@@ -34,13 +34,13 @@ namespace tillh
     using makeSourceExpression = decltype(makeSource(std::declval<T>()));
 
     template<class T>
-    struct canMakeIntoSender<T, std::enable_if_t<util::is_detected_v<makeSourceExpression, T>>> : std::true_type {};
+    struct canMakeIntoSender<T, std::enable_if_t<util::is_detected<makeSourceExpression, T>>> : std::true_type {};
 
     template<class T>
     using makeSinkExpression = decltype(makeSink(std::declval<T>()));
 
     template<class T>
-    struct canMakeIntoReceiver<T, std::enable_if_t<util::is_detected_v<makeSinkExpression, T>>> : std::true_type {};
+    struct canMakeIntoReceiver<T, std::enable_if_t<util::is_detected<makeSinkExpression, T>>> : std::true_type {};
 
     template<class Source, class Op, class Connections>
     struct isCompletedT<Input<Source, Output<Op, Connections>>> : std::true_type {};

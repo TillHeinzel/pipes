@@ -10,20 +10,20 @@ namespace tillh
   {
     namespace util
     {
-      template<typename T>
-      using begin_expression = decltype(std::begin(std::declval<T>()));
+      namespace adl
+      {
+        using std::begin;
+        using std::end;
 
-      template<typename T>
-      using end_expression = decltype(std::end(std::declval<T>()));
+        template<typename T>
+        using begin_expression = decltype(begin(std::declval<T>()));
 
-      template<class Range, class SFINAE = void>
-      struct is_range : std::false_type {};
-
-      template<typename Range>
-      struct is_range<Range, std::enable_if_t<is_detected_v<begin_expression, Range>&& is_detected_v<end_expression, Range>>> : std::true_type {};
+        template<typename T>
+        using end_expression = decltype(end(std::declval<T>()));
+      }
 
       template<class Range>
-      constexpr bool is_range_v = is_range<Range>::value;
+      constexpr bool is_range = is_detected<adl::begin_expression, Range> && is_detected<adl::end_expression, Range>;
     }
   }
 }

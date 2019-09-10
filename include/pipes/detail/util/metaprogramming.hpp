@@ -71,28 +71,20 @@ namespace tillh
       {
         return TypeList<Ts..., T>();
       }
-
+      
       template<typename...>
       using try_to_instantiate = void;
 
       using disregard_this = void;
 
-      template<template<class> class Expression, class Params>
-      struct is_detected
-      {
-      public:
-        template<class Params_>
-        static constexpr auto check(Type<Params_>) -> decltype(Type<Expression<Params_>>(), std::true_type());
+      template<template<typename...> class Expression, typename Attempt, typename... Ts>
+      struct is_detected_T : std::false_type {};
 
-        template<class...>
-        static constexpr auto check(...)->std::false_type;
+      template<template<typename...> class Expression, typename... Ts>
+      struct is_detected_T<Expression, try_to_instantiate<Expression<Ts...>>, Ts...> : std::true_type {};
 
-      public:
-        constexpr static bool value = decltype(check(Type<Params>()))::value;
-      };
-
-      template<template<class> class Expression, typename Ts>
-      constexpr bool is_detected_v = is_detected<Expression, Ts>::value;
+      template<template<typename...> class Expression, typename... Ts>
+      constexpr bool is_detected = is_detected_T<Expression, disregard_this, Ts...>::value;
     }
   }
 }

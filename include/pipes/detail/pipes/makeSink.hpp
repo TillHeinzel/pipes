@@ -25,17 +25,17 @@ namespace tillh
     template<class It>
     auto makeIteratorSink(It it)
     {
-      static_assert(util::is_output_iterator_v<It>, "");
+      static_assert(util::is_output_iterator<It>, "");
       return makeSinkOutput(IteratorSink<It>(it));
     }
 
-    template<class Pushable, std::enable_if_t<util::is_pushable_v<Pushable>, bool> = true>
+    template<class Pushable, std::enable_if_t<util::is_pushable<Pushable>, bool> = true>
     auto makeSink(Pushable & pushable)
     {
       return makeIteratorSink(std::back_inserter(pushable));
     }
 
-    template<class It, std::enable_if_t<util::is_output_iterator_v<It>, bool> = true>
+    template<class It, std::enable_if_t<util::is_output_iterator<It>, bool> = true>
     auto makeSink(It it)
     {
       return makeIteratorSink(it);
