@@ -73,5 +73,29 @@ namespace tillh
       };
       return makeNodeDirect(op, std::tuple_cat(makeOpenConnections(std::make_index_sequence<secondaryConnections>()), makePrimary()));
     }
+
+    template<std::size_t index, class Op, class Connections, class Child >
+    auto replace(Node<Op, Connections>&& node, Child&& child)
+    {
+      return makeNode(std::move(node.op), util::tuple_replace<index>(std::move(node.connections), FWD(child)));
+    }
+
+    template<class Op, class Connections, class Child >
+    auto replace_last(Node<Op, Connections>&& node, Child&& child)
+    {
+      constexpr auto lastIndex = util::tuple_back<Connections>;
+      return replace<lastIndex>(std::move(node), FWD(child));
+    }
+
+    template<std::size_t index, class Op, class Connections, class F>
+    auto apply(Node<Op, Connections>&& node, F f)
+    {
+      return replace<index>(std::move(node), f(std::get<index>(std::move(node).connections)));
+    }
+    template<class Op, class Connections, class F>
+    auto apply_last(Node<Op, Connections>&& node, F f)
+    {
+      return apply<util::tuple_back<Connections>>(std::move(node), f);
+    }
   }
 }
